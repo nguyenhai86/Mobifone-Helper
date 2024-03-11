@@ -1,5 +1,6 @@
 ﻿#requires AutoHotkey v2.0
 #SingleInstance force
+;*  Always on top
 ^+t:: {                          ; Alt + t
     Title_When_On_Top := "! "       ; change title "! " as required
     t := WinGetTitle("A")
@@ -13,46 +14,174 @@
         WinSetTitle Title_When_On_Top t, t
     }
 }
-
+;* Cộng 30 ngày kể từ hôm nay
+^+0::{
+    days := 30
+    dateResult := DateAdd_Custom(A_Now,days)
+    MsgBox(FormatDate(dateResult))
+    return
+}
+;* Cộng 10 ngày theo Clipboard
 ^+1::{
-    day := 10
+    days := 10
     oldClipboard := A_Clipboard
     Send "^c"
     Sleep 500
     dateString := Trim(A_Clipboard)
-    result := DateAdd_Custom(dateString,day)
+    date := DateParse(dateString)
     A_Clipboard := oldClipboard
-    MsgBox(result)
+    MsgBox(FormatDate(DateAdd_Custom(date,days)))
     return
 }
+;* Cộng 30 ngày theo Clipboard
 ^+3::{
-    day := 10
+    days := 30
     oldClipboard := A_Clipboard
     Send "^c"
     Sleep 500
     dateString := Trim(A_Clipboard)
-    result := DateAdd_Custom(dateString,day)
+    date := DateParse(dateString)
     A_Clipboard := oldClipboard
-    MsgBox(result)
+    MsgBox(FormatDate(DateAdd_Custom(date,days)))
     return
 }
+;* Cộng 60 ngày theo Clipboard
 ^+6::{
-    day := 10
+    days := 60
     oldClipboard := A_Clipboard
     Send "^c"
     Sleep 500
     dateString := Trim(A_Clipboard)
-    result := DateAdd_Custom(dateString,day)
+    date := DateParse(dateString)
     A_Clipboard := oldClipboard
-    MsgBox(result)
+    MsgBox(FormatDate(DateAdd_Custom(date,days)))
+    return
+}
+;* Thông tin gia hạn linh hoạt
+^+q::{
+    ;Lấy giá hạn linh hoạt lần đầu tiên
+    oldClipboard := A_Clipboard
+    Send "^c"
+    Sleep 500
+    newClipboard := A_Clipboard
+    newClipboard := Trim(newClipboard)
+    ;tien xu ly gia tri
+    stringMoney := newClipboard
+    if InStr(newClipboard,"."){
+        arr := StrSplit(newClipboard, ".")
+        stringMoney := Format("{1}{2}",arr[1],arr[2])
+    }
+    if InStr(newClipboard,","){
+        arr := StrSplit(newClipboard, ",")
+        stringMoney := Format("{1}{2}",arr[1],arr[2])
+    }
+
+    result := "Không hợp lệ"
+    IB := InputBox("Nhập giá gói cước", "Gia han linh hoat", "w150 h100")
+    editValue := Trim(IB.Value)
+    if IB.Result != "Cancel"{
+        if editValue = "pt120" ||  editValue = "PT120" || editValue = "pT120" || editValue = "Pt120" {
+            price := 120000
+            priceOnDay := 4000
+            chiaLayNguyen := Floor(stringMoney/priceOnDay)
+            soTienChinh := chiaLayNguyen * priceOnDay
+            stringPT120 := Format("Gói PT120 - Tổng giá gói: {1}đ`n`nGia hạn lần đầu: {2}đ cho {3} ngày`n`nGia hạn lần sau: {4}đ cho {5} ngày",120000, stringMoney, chiaLayNguyen, 120000 - stringMoney, 30 - chiaLayNguyen)
+            result := stringPT120
+        }
+        else{
+            priceOnDay := editValue / 30
+            firstDay := stringMoney / priceOnDay
+            secondDay := 30 - firstDay
+            secondMoney := editValue - stringMoney
+            result := Format("Tổng giá gói: {1}đ`n`nGia hạn lần đầu: {2}đ cho {3:0} ngày`n`nGia hạn lần sau: {4}đ cho {5:0} ngày",editValue, stringMoney, firstDay, secondMoney, secondDay)
+        }
+        MsgBox result
+    }
+
+    A_Clipboard := oldClipboard
+    return
+}
+; 2023-09-03
+^+e::{
+    oldClipboard := A_Clipboard
+    Send "^c"
+    Sleep 500
+    dateString := Trim(A_Clipboard)
+    date := 0
+    try {
+        date := DateParse(dateString)
+    } catch Error as e {
+        date := A_Now
+    }
+    titleGUI := "Date Calculator"
+    MyGui := Gui(, titleGUI)
+    i := 0
+    stringLine := "-------------------------------------------------------------------------"
+    loop 18{
+        if i = 0{
+            MyGui.Add("Text","x10 y20 cRed", "Chu kỳ")
+            MyGui.Add("Text", "x70 y20 cRed", "30 Ngày")
+            MyGui.Add("Text","x160 y20 cRed", "31 Ngày")
+            MyGui.Add("Text","xm", stringLine)
+        }
+        else{
+            If i = 17
+                MyGui.Add("Text","xm","Hết hạn")
+            else
+            MyGui.Add("Text","x10",i)
+
+            lastDate30 := DateAdd_Custom(date,30*(i-1))
+            lastDate31 := DateAdd_Custom(date,31*(i-1))
+            if DateDiff__Custom(lastDate30) > 0
+                MyGui.Add("Text","x70 yp cBlue	",FormatDate(lastDate30))
+            else
+                MyGui.Add("Text","x70 yp",FormatDate(lastDate30))
+
+            if DateDiff__Custom(lastDate31) > 0
+                MyGui.Add("Text","x160 yp cBlue",FormatDate(lastDate31))
+            else
+                MyGui.Add("Text","x160 yp",FormatDate(lastDate31))
+            MyGui.Add("Text","xm", stringLine)
+        }
+        i := i + 1
+    }
+    
+    A_Clipboard := oldClipboard
+    MyGui.OnEvent("Escape", MyGui_Escape)
+    MyGui_Escape(thisGui){
+        WinClose titleGUI
+    }
+    MyGui.Show()
+}
+
+;* Đếm số cuộc gọi
+global countCall := 0
+CapsLock::{
+    global countCall
+    countCall := countCall + 1
+    Send "^v"
+    Sleep 300
+    Send "{Enter}"
+    return
+}
+^CapsLock::{
+    MsgBox(Format("Số lượng CG: {1}", countCall))
+}
+
+;* Phím tắt gửi tin
+^+w::{
+    SendInput "Yeu cau ve dich vu Mobile Internet cua Quy khach da duoc xu ly. Chi tiet lien he 9090, MobiFone han hanh duoc phuc vu." 
     return
 }
 
-DateAdd_Custom(dateString, day) {
-    dateResult := DateParse(dateString)
-    dateResult := DateAdd(dateResult, day, "days")
-    result := FormatTime(dateResult, "dd MMM yyyy HH:mm:ss")
-    return result
+DateAdd_Custom(date, days) {
+     return DateAdd(date, days, "days")
+}
+FormatDate(date){
+    return FormatTime(date, "dd MMM yyyy")
+}
+DateDiff__Custom(date){
+    return DateDiff(A_Now,date,"days")
 }
 DateParse(str, americanOrder := 0) {
     ; Definition of several RegExes
