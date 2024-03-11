@@ -14,13 +14,7 @@
         WinSetTitle Title_When_On_Top t, t
     }
 }
-;* Cộng 30 ngày kể từ hôm nay
-^+0::{
-    days := 30
-    dateResult := DateAdd_Custom(A_Now,days)
-    MsgBox(FormatDate(dateResult))
-    return
-}
+
 ;* Cộng 10 ngày theo Clipboard
 ^+1::{
     days := 10
@@ -29,7 +23,12 @@
     Sleep 500
     dateString := Trim(A_Clipboard)
     date := DateParse(dateString)
-    A_Clipboard := oldClipboard
+    date := 0
+    try {
+        date := DateParse(dateString)
+    } catch Error as e {
+        date := A_Now
+    }
     MsgBox(FormatDate(DateAdd_Custom(date,days)))
     return
 }
@@ -40,7 +39,12 @@
     Send "^c"
     Sleep 500
     dateString := Trim(A_Clipboard)
-    date := DateParse(dateString)
+    date := 0
+    try {
+        date := DateParse(dateString)
+    } catch Error as e {
+        date := A_Now
+    }
     A_Clipboard := oldClipboard
     MsgBox(FormatDate(DateAdd_Custom(date,days)))
     return
@@ -52,7 +56,12 @@
     Send "^c"
     Sleep 500
     dateString := Trim(A_Clipboard)
-    date := DateParse(dateString)
+    date := 0
+    try {
+        date := DateParse(dateString)
+    } catch Error as e {
+        date := A_Now
+    }
     A_Clipboard := oldClipboard
     MsgBox(FormatDate(DateAdd_Custom(date,days)))
     return
