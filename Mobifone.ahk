@@ -176,7 +176,48 @@ CapsLock::{
 ^CapsLock::{
     MsgBox(Format("Số lượng CG: {1}", countCall))
 }
+^PgDn::{
+    global countCall
+    countCall := 0
+    MsgBox Format("Số lượng CG được reset về {1}", countCall)
+}
+PgDn::{
+    global countCall
+    countCall := countCall + 1
+    Sleep 200
+    Send "{Down}"
+}
+;* Calculator Ready Time
+global startTime := A_Now
+global status := false ;true: ready / false: not
+global secondNotTime := 0
+;global beginNot := startTime
+global beginNot := 20240313230000   
+PgUp::{
+    global status
+    global secondNotTime
+    global beginNot
+    if status = false { ; neu dang not
+        secondNotTime := secondNotTime +  DateDiff(A_Now, beginNot, "seconds")
+        status := true
+    }
+    else { ; neu dang ready
+        status := false
+        beginNot := A_Now
+    }
+}
+^PgUp::{
+    global status
+    stringStartTime := FormatTime(startTime, "HH:mm:ss")
+    result := Format("Start Time: {1}`nTrạng thái: {2}`nTổng thời gian not: {3}", stringStartTime, status?"Ready":"Not", ConvertSecondToTime(secondNotTime))
+    MsgBox result
+}
 
+ConvertSecondToTime(second){
+    hours := Floor(second / 3600)
+    minutes := Floor(( second - ( hours * 3600 ) ) / 60)
+    return Format("{1} giờ {2} phút", hours, minutes)
+}
 ;* Phím tắt gửi tin
 ^+w::{
     SendInput "Yeu cau ve dich vu Mobile Internet cua Quy khach da duoc xu ly. Chi tiet lien he 9090, MobiFone han hanh duoc phuc vu." 
