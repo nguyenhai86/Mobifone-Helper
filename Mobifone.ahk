@@ -176,7 +176,7 @@ global countCall := 0
 }
 +PgDn:: {
     global countCall
-    MsgBox Format("So luong cuoc goi: ", countCall)
+    MsgBox Format("So luong cuoc goi: {1}", countCall)
 }
 PgDn:: {
     global countCall
@@ -209,11 +209,11 @@ PgDn:: {
 ;* Tra cuu so dien thoai tong dai
 ^+s:: {
     ; Define the phone prefixes and corresponding customer service numbers
-    Viettel := ["086", "096", "097", "098", "032", "033", "034", "035", "036", "037", "038", "039"]
-    Mobifone := ["089", "090", "093", "070", "076", "077", "078", "079"]
-    Vinaphone := ["088", "091", "094", "083", "084", "085", "081", "082"]
-    GtelMobile := ["099", "059"]
-    Itelecom := ["087"]
+    Viettel := ["86", "96", "97", "98", "32", "33", "34", "35", "36", "37", "38", "39"]
+    Mobifone := ["89", "90", "93", "70", "76", "77", "78", "79"]
+    Vinaphone := ["88", "91", "94", "83", "84", "85", "81", "82"]
+    GtelMobile := ["99", "59"]
+    Itelecom := ["87"]
 
     tongDai := { Viettel: "18008098 - Cuoc goi mien phi", Mobifone: "18001090 - Cuoc goi mien phi", Vinaphone: "18001091 - Cuoc goi mien phi", GtelMobile: "0993 888 198 - Cuoc goi thong thuong", Itelecom: "0877 087 087 - Cuoc goi thong thuong" }
 
@@ -222,67 +222,78 @@ PgDn:: {
     Sleep 500
     newClipboard := A_Clipboard
     phoneNumber := Trim(newClipboard)
+    A_Clipboard := oldClipboard
 
     status := 0
-    prefix := SubStr(phoneNumber, 1, 3)
+    prefix := "0"
+    If SubStr(phoneNumber, 1, 1) = "0"
+        prefix := SubStr(phoneNumber, 2, 3)
+    else
+        prefix := SubStr(phoneNumber, 1, 2)
+    result := ""
     ; Viettel
-    for index, value in Viettel {
-        if (prefix = value) {
-            MsgBox Format("So dien thoai {1} - {2} `n`n Tong dai: {3}", phoneNumber, "Viettel", tongDai.Viettel)
-            status := 1
-            break
+    if status = 0 {
+        for index, value in Viettel {
+            if (prefix = value) {
+                result := Format("So dien thoai {1} - {2} `n`nTong dai: {3}", phoneNumber, "Viettel", tongDai.Viettel)
+                status := 1
+                break
+            }
         }
     }
-    ; Viettel
-    for index, value in Viettel {
-        if (prefix = value) {
-            MsgBox Format("So dien thoai {1} - {2} `n`n Tong dai: {3}", phoneNumber, "Viettel", tongDai.Viettel)
-            status := 1
-            break
-        }
-    }
+
     ; Mobifone
-    for index, value in Mobifone {
-        if (prefix = value) {
-            MsgBox Format("So dien thoai {1} - {2} `n`n Tong dai: {3}", phoneNumber, "Mobifone", tongDai.Mobifone)
-            status := 1
-            break
+    if status = 0 {
+        for index, value in Mobifone {
+            if (prefix = value) {
+                result := Format("So dien thoai {1} - {2} `n`nTong dai: {3}", phoneNumber, "Mobifone", tongDai.Mobifone)
+                status := 1
+                break
+            }
         }
     }
+
     ; Vinaphone
-    for index, value in Vinaphone {
-        if (prefix = value) {
-            MsgBox Format("So dien thoai {1} - {2} `n`n Tong dai: {3}", phoneNumber, "Vinaphone", tongDai.Vinaphone)
-            status := 1
-            break
+    if status = 0 {
+        for index, value in Vinaphone {
+            if (prefix = value) {
+                result := Format("So dien thoai {1} - {2} `n`nTong dai: {3}", phoneNumber, "Vinaphone", tongDai.Vinaphone)
+                status := 1
+                break
+            }
         }
     }
     ; GtelMobile
-    for index, value in GtelMobile {
-        if (prefix = value) {
-            MsgBox Format("So dien thoai {1} - {2} `n`n Tong dai: {3}", phoneNumber, "GtelMobile", tongDai.GtelMobile)
-            status := 1
-            break
+    if status = 0 {
+        for index, value in GtelMobile {
+            if (prefix = value) {
+                result := Format("So dien thoai {1} - {2} `n`nTong dai: {3}", phoneNumber, "GtelMobile", tongDai.GtelMobile)
+                status := 1
+                break
+            }
         }
     }
+
     ; Itelecom
-    for index, value in Itelecom {
-        if (prefix = value) {
-            MsgBox Format("So dien thoai {1} - {2} `n`n Tong dai: {3}", phoneNumber, "Itelecom", tongDai.Itelecom)
-            status := 1
-            break
+    if status = 0 {
+        for index, value in Itelecom {
+            if (prefix = value) {
+                result := Format("So dien thoai {1} - {2} `n`nTong dai: {3}", phoneNumber, "Itelecom", tongDai.Itelecom)
+                status := 1
+                break
+            }
         }
     }
     if status = 0 {
-        MsgBox Format("Khong tim thay nha mang cho so dien thoai: {1}", phoneNumber)
+        result := Format("Khong tim thay nha mang cho so dien thoai: {1}", phoneNumber)
     }
+    MsgBox result
 }
 
 ;* Tu dong lay SDT
-~:: {
+`:: {
     ; Tìm cửa sổ có tiêu đề "Call Information"
-    ;CallInfoTitle := "Call Information"
-    CallInfoTitle := "OneDrive"
+    CallInfoTitle := "Call Information"
     winInfoCall := WinExist(CallInfoTitle)
     if winInfoCall
     {
@@ -295,7 +306,7 @@ PgDn:: {
         phoneNumber := A_Clipboard
 
         VMSTitle := "Customer Care of VMS"
-        winVMS := WinExist(winVMS)
+        winVMS := WinExist(VMSTitle)
         if winVMS
         {
             ; Đưa cửa sổ lên trước
@@ -307,6 +318,7 @@ PgDn:: {
             Send "https://tracuu.mobifone.vn/1090/mobicard.jsp"
             Sleep 500
             Send "{Enter}"
+            Sleep 1000
 
             Send phoneNumber
             Sleep 300
@@ -340,6 +352,7 @@ PgDn:: {
     Sleep 500
     newClipboard := A_Clipboard
     value := Trim(newClipboard)
+    A_Clipboard := oldClipboard
     MsgBox GetInfoByCodeOrCompletionCode(codes, value)
 }
 
@@ -402,6 +415,7 @@ PgDn:: {
     Sleep 500
     newClipboard := A_Clipboard
     key := Trim(newClipboard)
+    A_Clipboard := oldClipboard
     MsgBox loopkup(dataLS, key)
 }
 
@@ -414,6 +428,12 @@ F2:: {
 }
 F3:: {
     ProcessAutomation(3)
+}
+
+F5:: {
+    Send "^r"
+    Sleep 150
+    Send "{Enter}"
 }
 
 ConvertSecondToTime(second) {
@@ -643,7 +663,10 @@ ProcessAutomation(action) {
     Send "{Tab}"
     ; Ô mô tả cảm xúc phía KH
     Sleep 500
-    Send "Yeu cau ve dich vu  cua Quy khach da duoc xu ly. Chi tiet lien he 9090, MobiFone han hanh duoc phuc vu."
+    If action = 1 || action = 2
+        Send "Yeu cau ve dich vu Mobile Internet cua Quy khach da duoc xu ly. Chi tiet lien he 9090, MobiFone han hanh duoc phuc vu."
+    else If action = 3
+        Send "Yeu cau ve dich vu  cua Quy khach da duoc xu ly. Chi tiet lien he 9090, MobiFone han hanh duoc phuc vu."
     Sleep 2000
     Send "{Tab}"
     Sleep 500
