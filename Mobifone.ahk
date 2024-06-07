@@ -1,13 +1,14 @@
 ﻿#requires AutoHotkey v2.0
 #SingleInstance force
+global fileBlacklist := "blacklist.csv"
 ;*  Always on top
-^+t:: {                          ; Alt + t
+^+t:: { ; Alt + t
     Title_When_On_Top := "! "       ; change title "! " as required
     t := WinGetTitle("A")
     ExStyle := WinGetExStyle(t)
     If (ExStyle & 0x8) {            ; 0x8 is WS_EX_TOPMOST
         WinSetAlwaysOnTop 0, t      ; Turn OFF and remove Title_When_On_Top
-        WinSetTitle (RegExReplace(t, Title_When_On_Top)), t 
+        WinSetTitle (RegExReplace(t, Title_When_On_Top)), t
     }
     Else {
         WinSetAlwaysOnTop 1, t      ; Turn ON and add Title_When_On_Top
@@ -16,12 +17,13 @@
 }
 
 ;* Cộng 10 ngày theo Clipboard
-^+1::{
+^+1:: {
     days := 10
     oldClipboard := A_Clipboard
     Send "^c"
     Sleep 500
     dateString := Trim(A_Clipboard)
+    A_Clipboard := oldClipboard
     date := DateParse(dateString)
     date := 0
     try {
@@ -29,16 +31,17 @@
     } catch Error as e {
         date := A_Now
     }
-    MsgBox(FormatDate(DateAdd_Custom(date,days)))
+    MsgBox(FormatDate(DateAdd_Custom(date, days)))
     return
 }
 ;* Cộng 30 ngày theo Clipboard
-^+3::{
+^+3:: {
     days := 30
     oldClipboard := A_Clipboard
     Send "^c"
     Sleep 500
     dateString := Trim(A_Clipboard)
+    A_Clipboard := oldClipboard
     date := 0
     try {
         date := DateParse(dateString)
@@ -46,16 +49,17 @@
         date := A_Now
     }
     A_Clipboard := oldClipboard
-    MsgBox(FormatDate(DateAdd_Custom(date,days)))
+    MsgBox(FormatDate(DateAdd_Custom(date, days)))
     return
 }
 ;* Cộng 60 ngày theo Clipboard
-^+6::{
+^+6:: {
     days := 60
     oldClipboard := A_Clipboard
     Send "^c"
     Sleep 500
     dateString := Trim(A_Clipboard)
+    A_Clipboard := oldClipboard
     date := 0
     try {
         date := DateParse(dateString)
@@ -63,11 +67,11 @@
         date := A_Now
     }
     A_Clipboard := oldClipboard
-    MsgBox(FormatDate(DateAdd_Custom(date,days)))
+    MsgBox(FormatDate(DateAdd_Custom(date, days)))
     return
 }
 ;* Thông tin gia hạn linh hoạt
-^+q::{
+^+q:: {
     ;Lấy giá hạn linh hoạt lần đầu tiên
     oldClipboard := A_Clipboard
     Send "^c"
@@ -76,33 +80,33 @@
     newClipboard := Trim(newClipboard)
     ;tien xu ly gia tri
     stringMoney := newClipboard
-    if InStr(newClipboard,"."){
+    if InStr(newClipboard, ".") {
         arr := StrSplit(newClipboard, ".")
-        stringMoney := Format("{1}{2}",arr[1],arr[2])
+        stringMoney := Format("{1}{2}", arr[1], arr[2])
     }
-    if InStr(newClipboard,","){
+    if InStr(newClipboard, ",") {
         arr := StrSplit(newClipboard, ",")
-        stringMoney := Format("{1}{2}",arr[1],arr[2])
+        stringMoney := Format("{1}{2}", arr[1], arr[2])
     }
 
     result := "Không hợp lệ"
     IB := InputBox("Nhập giá gói cước", "Gia han linh hoat", "w150 h100")
     editValue := Trim(IB.Value)
-    if IB.Result != "Cancel"{
-        if editValue = "pt120" ||  editValue = "PT120" || editValue = "pT120" || editValue = "Pt120" {
+    if IB.Result != "Cancel" {
+        if editValue = "pt120" || editValue = "PT120" || editValue = "pT120" || editValue = "Pt120" {
             price := 120000
             priceOnDay := 4000
-            chiaLayNguyen := Floor(stringMoney/priceOnDay)
+            chiaLayNguyen := Floor(stringMoney / priceOnDay)
             soTienChinh := chiaLayNguyen * priceOnDay
-            stringPT120 := Format("Gói PT120 - Tổng giá gói: {1}đ`n`nGia hạn lần đầu: {2}đ cho {3} ngày`n`nGia hạn lần sau: {4}đ cho {5} ngày",120000, stringMoney, chiaLayNguyen, 120000 - stringMoney, 30 - chiaLayNguyen)
+            stringPT120 := Format("Gói PT120 - Tổng giá gói: {1}đ`n`nGia hạn lần đầu: {2}đ cho {3} ngày`n`nGia hạn lần sau: {4}đ cho {5} ngày", 120000, stringMoney, chiaLayNguyen, 120000 - stringMoney, 30 - chiaLayNguyen)
             result := stringPT120
         }
-        else{
+        else {
             priceOnDay := editValue / 30
             firstDay := stringMoney / priceOnDay
             secondDay := 30 - firstDay
             secondMoney := editValue - stringMoney
-            result := Format("Tổng giá gói: {1}đ`n`nGia hạn lần đầu: {2}đ cho {3:0} ngày`n`nGia hạn lần sau: {4}đ cho {5:0} ngày",editValue, stringMoney, firstDay, secondMoney, secondDay)
+            result := Format("Tổng giá gói: {1}đ`n`nGia hạn lần đầu: {2}đ cho {3:0} ngày`n`nGia hạn lần sau: {4}đ cho {5:0} ngày", editValue, stringMoney, firstDay, secondMoney, secondDay)
         }
         MsgBox result
     }
@@ -110,8 +114,8 @@
     A_Clipboard := oldClipboard
     return
 }
-; 2023-09-03
-^+e::{
+;* Date Calculator
+^+e:: {
     oldClipboard := A_Clipboard
     Send "^c"
     Sleep 500
@@ -126,38 +130,38 @@
     MyGui := Gui(, titleGUI)
     i := 0
     stringLine := "-------------------------------------------------------------------------"
-    loop 18{
-        if i = 0{
-            MyGui.Add("Text","x10 y20 cRed", "Chu kỳ")
+    loop 18 {
+        if i = 0 {
+            MyGui.Add("Text", "x10 y20 cRed", "Chu kỳ")
             MyGui.Add("Text", "x70 y20 cRed", "30 Ngày")
-            MyGui.Add("Text","x160 y20 cRed", "31 Ngày")
-            MyGui.Add("Text","xm", stringLine)
+            MyGui.Add("Text", "x160 y20 cRed", "31 Ngày")
+            MyGui.Add("Text", "xm", stringLine)
         }
-        else{
+        else {
             If i = 17
-                MyGui.Add("Text","xm","Hết hạn")
+                MyGui.Add("Text", "xm", "Hết hạn")
             else
-            MyGui.Add("Text","x10",i)
+                MyGui.Add("Text", "x10", i)
 
-            lastDate30 := DateAdd_Custom(date,30*(i-1))
-            lastDate31 := DateAdd_Custom(date,31*(i-1))
+            lastDate30 := DateAdd_Custom(date, 30 * (i - 1))
+            lastDate31 := DateAdd_Custom(date, 31 * (i - 1))
             if DateDiff__Custom(lastDate30) > 0
-                MyGui.Add("Text","x70 yp cBlue	",FormatDate(lastDate30))
+                MyGui.Add("Text", "x70 yp cBlue	", FormatDate(lastDate30))
             else
-                MyGui.Add("Text","x70 yp",FormatDate(lastDate30))
+                MyGui.Add("Text", "x70 yp", FormatDate(lastDate30))
 
             if DateDiff__Custom(lastDate31) > 0
-                MyGui.Add("Text","x160 yp cBlue",FormatDate(lastDate31))
+                MyGui.Add("Text", "x160 yp cBlue", FormatDate(lastDate31))
             else
-                MyGui.Add("Text","x160 yp",FormatDate(lastDate31))
-            MyGui.Add("Text","xm", stringLine)
+                MyGui.Add("Text", "x160 yp", FormatDate(lastDate31))
+            MyGui.Add("Text", "xm", stringLine)
         }
         i := i + 1
     }
-    
+
     A_Clipboard := oldClipboard
     MyGui.OnEvent("Escape", MyGui_Escape)
-    MyGui_Escape(thisGui){
+    MyGui_Escape(thisGui) {
         WinClose titleGUI
     }
     MyGui.Show()
@@ -165,73 +169,266 @@
 
 ;* Đếm số cuộc gọi
 global countCall := 0
-CapsLock::{
-    global countCall
-    countCall := countCall + 1
-    Send "^v"
-    Sleep 300
-    Send "{Enter}"
-    return
-}
-^CapsLock::{
-    MsgBox(Format("Số lượng CG: {1}", countCall))
-}
-^PgDn::{
+^PgDn:: {
     global countCall
     countCall := 0
     MsgBox Format("Số lượng CG được reset về {1}", countCall)
 }
-PgDn::{
++PgDn:: {
+    global countCall
+    MsgBox Format("So luong cuoc goi: ", countCall)
+}
+PgDn:: {
     global countCall
     countCall := countCall + 1
-    Sleep 200
+    Sleep 100
     Send "{Down}"
 }
-;* Calculator Ready Time
-global startTime := A_Now
-global status := false ;true: ready / false: not
-global secondNotTime := 0
-;global beginNot := startTime
-global beginNot := 20240313230000   
-PgUp::{
-    global status
-    global secondNotTime
-    global beginNot
-    if status = false { ; neu dang not
-        secondNotTime := secondNotTime +  DateDiff(A_Now, beginNot, "seconds")
-        status := true
+
+;* Tra cuu cac profile dang ky goi DT20
+^+y:: {
+    profiles := ["QT2", "TT2", "YT2", "RZT2", "SVT2", "TNT2", "WT2", "KT2", "TBT2", "Q263", "QTN1", "QTN2", "HAT2", "MCP", "SBK", "BKS", "ZMT", "DHMT", "ZHN", "W2G"]
+    oldClipboard := A_Clipboard
+    Send "^c"
+    Sleep 200
+    profileClipboard := Trim(A_Clipboard)
+    A_Clipboard := oldClipboard
+    status := 0
+    for index, profile in profiles {
+        if profile = profileClipboard {
+            MsgBox Format("Profile hien tai la {1} co the dang ky goi DT20", profile)
+            status := 1
+            break
+        }
     }
-    else { ; neu dang ready
-        status := false
-        beginNot := A_Now
+    if status = 0 {
+        MsgBox Format("Profile hien tai la {1} khong dang ky duoc DT20", profileClipboard)
     }
-}
-^PgUp::{
-    global status
-    stringStartTime := FormatTime(startTime, "HH:mm:ss")
-    result := Format("Start Time: {1}`nTrạng thái: {2}`nTổng thời gian not: {3}", stringStartTime, status?"Ready":"Not", ConvertSecondToTime(secondNotTime))
-    MsgBox result
 }
 
-ConvertSecondToTime(second){
+;* Tra cuu so dien thoai tong dai
+^+s:: {
+    ; Define the phone prefixes and corresponding customer service numbers
+    Viettel := ["086", "096", "097", "098", "032", "033", "034", "035", "036", "037", "038", "039"]
+    Mobifone := ["089", "090", "093", "070", "076", "077", "078", "079"]
+    Vinaphone := ["088", "091", "094", "083", "084", "085", "081", "082"]
+    GtelMobile := ["099", "059"]
+    Itelecom := ["087"]
+
+    tongDai := { Viettel: "18008098 - Cuoc goi mien phi", Mobifone: "18001090 - Cuoc goi mien phi", Vinaphone: "18001091 - Cuoc goi mien phi", GtelMobile: "0993 888 198 - Cuoc goi thong thuong", Itelecom: "0877 087 087 - Cuoc goi thong thuong" }
+
+    oldClipboard := A_Clipboard
+    Send "^c"
+    Sleep 500
+    newClipboard := A_Clipboard
+    phoneNumber := Trim(newClipboard)
+
+    status := 0
+    prefix := SubStr(phoneNumber, 1, 3)
+    ; Viettel
+    for index, value in Viettel {
+        if (prefix = value) {
+            MsgBox Format("So dien thoai {1} - {2} `n`n Tong dai: {3}", phoneNumber, "Viettel", tongDai.Viettel)
+            status := 1
+            break
+        }
+    }
+    ; Viettel
+    for index, value in Viettel {
+        if (prefix = value) {
+            MsgBox Format("So dien thoai {1} - {2} `n`n Tong dai: {3}", phoneNumber, "Viettel", tongDai.Viettel)
+            status := 1
+            break
+        }
+    }
+    ; Mobifone
+    for index, value in Mobifone {
+        if (prefix = value) {
+            MsgBox Format("So dien thoai {1} - {2} `n`n Tong dai: {3}", phoneNumber, "Mobifone", tongDai.Mobifone)
+            status := 1
+            break
+        }
+    }
+    ; Vinaphone
+    for index, value in Vinaphone {
+        if (prefix = value) {
+            MsgBox Format("So dien thoai {1} - {2} `n`n Tong dai: {3}", phoneNumber, "Vinaphone", tongDai.Vinaphone)
+            status := 1
+            break
+        }
+    }
+    ; GtelMobile
+    for index, value in GtelMobile {
+        if (prefix = value) {
+            MsgBox Format("So dien thoai {1} - {2} `n`n Tong dai: {3}", phoneNumber, "GtelMobile", tongDai.GtelMobile)
+            status := 1
+            break
+        }
+    }
+    ; Itelecom
+    for index, value in Itelecom {
+        if (prefix = value) {
+            MsgBox Format("So dien thoai {1} - {2} `n`n Tong dai: {3}", phoneNumber, "Itelecom", tongDai.Itelecom)
+            status := 1
+            break
+        }
+    }
+    if status = 0 {
+        MsgBox Format("Khong tim thay nha mang cho so dien thoai: {1}", phoneNumber)
+    }
+}
+
+;* Tu dong lay SDT
+~:: {
+    ; Tìm cửa sổ có tiêu đề "Call Information"
+    ;CallInfoTitle := "Call Information"
+    CallInfoTitle := "OneDrive"
+    winInfoCall := WinExist(CallInfoTitle)
+    if winInfoCall
+    {
+        ; Đưa cửa sổ lên trước
+        WinActivate(winInfoCall)
+        Sleep 200
+        ; Gửi phím Enter
+        Send "{Enter}"
+        Sleep 200
+        phoneNumber := A_Clipboard
+
+        VMSTitle := "Customer Care of VMS"
+        winVMS := WinExist(winVMS)
+        if winVMS
+        {
+            ; Đưa cửa sổ lên trước
+            WinActivate(winVMS)
+            Sleep 400
+
+            Send "!d"
+            Sleep 200
+            Send "https://tracuu.mobifone.vn/1090/mobicard.jsp"
+            Sleep 500
+            Send "{Enter}"
+
+            Send phoneNumber
+            Sleep 300
+            Send "{Enter}"
+
+            try {
+                message := checkPhoneNumber(phoneNumber, fileBlacklist)
+                if message {
+                    MsgBox message
+                }
+            } catch Error as e {
+            }
+        }
+    }
+}
+
+;* Tong dai ung tien
+^+u:: {
+    codes := Map(
+        "9015", Map("Time", "chờ 24h", "Tài khoản", "TKC", "Kiểm tra nợ", "KT", "DK ứng tự động", "UDT/SUBS", "Hủy ứng tự động", "TCUTD", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "HU"),
+        "9913", Map("Time", "", "Tài khoản", "TK_AP1: - Thoại/SMS nội mạng, liên mạng.", "Kiểm tra nợ", "", "DK ứng tự động", "TD", "Hủy ứng tự động", "HUY TD", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "UACHU"),
+        "9928", Map("Time", "", "Tài khoản", "Phút gọi", "Kiểm tra nợ", "TT", "DK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "HT", "Mã hoàn ứng", "MBHU"),
+        "988", Map("Time", "", "Tài khoản", "KM3: Thoại/SMS nội mạng, liên mạng / DT20", "Kiểm tra nợ", "KT", "DK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "MBFHU"),
+        "9070", Map("Time", "24h", "Tài khoản", "Data", "Kiểm tra nợ", "KT", "DK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "TT", "Mã hoàn ứng", "DT247HU"),
+        "1256", Map("Time", "7 ngày", "Tài khoản", "Data", "Kiểm tra nợ", "KT", "DK ứng tự động", "UDT", "Hủy ứng tự động", "HUY", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "EHU"),
+        "1255", Map("Time", "", "Tài khoản", "TK_AP2: Thoại/SMS nội mạng, liên mạng.", "Kiểm tra nợ", "", "DK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "UAGHU"),
+        "5110", Map("Time", "", "Tài khoản", "Phút gọi", "Kiểm tra nợ", "KT", "DK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "HT", "Mã hoàn ứng", "SPHU")
+    )
+    oldClipboard := A_Clipboard
+    Send "^c"
+    Sleep 500
+    newClipboard := A_Clipboard
+    value := Trim(newClipboard)
+    MsgBox GetInfoByCodeOrCompletionCode(codes, value)
+}
+
+^+l:: {
+    dataLS := {}
+    dataLS.DNFC := "Đấu số MobiCard mới (do chuyển từ MobiGold sang)"
+    dataLS.DNGQ := "Đấu số MobiQ mới (do chuyển từ MobiGold sang)"
+    dataLS.GLZO := "MobiGold qua MobiZone"
+    dataLS.FQTE := "Chuyển MobiGold sang Q_TEEN"
+    dataLS.DPFC := "Chuyển MobiGold sang FastConnect trả trước"
+    dataLS.DNQT := "Chuyển MobiGold sang Mobi Qteen"
+    dataLS.DNG3 := "Chuyển MobiGold sang Mobi365"
+    dataLS.DNFU := "Chuyển MobiGold sang Mobi4U"
+    dataLS.DNFSV := "Chuyển MobiGold sang MobiQ_SV"
+    dataLS.DN2S := "Đấu nối Sim 2 số"
+    dataLS.DNGD := "Đấu nối hay khôi phục theo giấy duyệt"
+    dataLS.DOIS := "Đối soát"
+    dataLS.HUY := "Đấu F1 sửa sai TDN"
+    dataLS.KP := "Khôi phục số đã hủy"
+    dataLS.VMS := "Đấu mới"
+    dataLS.STH := "Sim Thu TT"
+    dataLS.DNST := "Đấu nối sim thử"
+    dataLS.CHS := "Đấu F1 sửa sai cửa hàng (test)"
+    dataLS.DBO := "Thay đổi giữa các hình thức trả trước (do KH tự chuyển - bấm Note để xem chi tiết)"
+    dataLS.KHYC := "Thay đổi giữa các hình thức trả trước (do KH tự chuyển - bấm Note để xem chi tiết)"
+    dataLS.QSV := "Chuyển từ trả trước khác sang Q-SV"
+    dataLS.QTE := "Chuyển từ trả trước khác sang Q-Teen"
+    dataLS.INAC := "Chặn 1 chiều do hết hạn sử dụng (Mobi4U là do hết tiền)"
+    dataLS.CSKS := "Chặn 1 chiều do nghi ngờ sim kích hoạt sẵn"
+    dataLS.DEAC := "Chặn 2 chiều do hết hạn nghe"
+    dataLS.ACTI := "Mở 2 chiều do nạp tiền"
+    dataLS.RES := "Chặn 1 chiều do hết tiền (nhưng còn ngày sử dụng)"
+    dataLS.CA3 := "Cắt hủy/ cắt hẳn trả trước do KH hủy số không sử dụng"
+    dataLS.CA7 := "Hủy sim 2 số, thanh lý 1 số"
+    dataLS.ACTI := "Kích hoạt số trả trước mới"
+    dataLS.GKK := "MobiGold hòa mạng mới (do Mobi365 chuyển sang)"
+    dataLS.CFKK := "MobiGold hòa mạng mới (do MobiCard chuyển sang)"
+    dataLS.MCVU := "MobiGold số công vụ hòa mạng mới (số mới)"
+    dataLS.MS := "MobiGold hòa mạng mới (số mới)"
+    dataLS.QFON := "MobiGold hòa mạng mới (do MobiQ chuyển sang)"
+    dataLS.QTEF := "MobiGold hòa mạng mới (do Q-Teen chuyển sang)"
+    dataLS.SVFKK := "MobiGold hòa mạng mới (do Q-Student chuyển sang)"
+    dataLS.UFKK := "MobiGold hòa mạng mới (do Mobi4U chuyển sang)"
+    dataLS.ZFKK := "MobiGold hòa mạng mới (do MobiZone chuyển sang)"
+    dataLS.CCX := "Sim tạm khóa 2 chiều do không có TT"
+    dataLS.DKKH := "Chặn/ hủy số Mobi4U không kích hoạt (khóa số sau 30 ngày)"
+    dataLS.HNAC := "Sim khóa do hết hạn sử dụng"
+    dataLS.HQUY := "Hủy số chưa hòa mạng (khóa sau 30 ngày)"
+    dataLS.HSIM := "Sim tạm khóa 2 chiều do hủy số"
+    dataLS.MFQT := "Chuyển từ trả trước khác sang Q-Teen"
+    dataLS.TK6T := "Khóa số 2 chiều sau 6 tháng (31 ngày)"
+    dataLS.VINA := "Cắt hủy/ cắt hẳn MobiGold vì KH chuyển sang Vinaphone"
+    dataLS.ZFKK := "MobiZone chuyển sang MobiGold: Còn tiền"
+    dataLS.CCXN := "Chặn do nghi ngờ sim kích hoạt sẵn"
+    dataLS.CĐSS := "Chặn do nghi ngờ sim kích hoạt sẵn"
+    dataLS.KDID := "Chặn do nghi ngờ sim kích hoạt sẵn"
+
+    oldClipboard := A_Clipboard
+    Send "^c"
+    Sleep 500
+    newClipboard := A_Clipboard
+    key := Trim(newClipboard)
+    MsgBox loopkup(dataLS, key)
+}
+
+;* Sendkey
+F1:: {
+    ProcessAutomation(1)
+}
+F2:: {
+    ProcessAutomation(2)
+}
+F3:: {
+    ProcessAutomation(3)
+}
+
+ConvertSecondToTime(second) {
     hours := Floor(second / 3600)
-    minutes := Floor(( second - ( hours * 3600 ) ) / 60)
+    minutes := Floor((second - (hours * 3600)) / 60)
     return Format("{1} giờ {2} phút", hours, minutes)
 }
-;* Phím tắt gửi tin
-^+w::{
-    SendInput "Yeu cau ve dich vu Mobile Internet cua Quy khach da duoc xu ly. Chi tiet lien he 9090, MobiFone han hanh duoc phuc vu." 
-    return
-}
-
 DateAdd_Custom(date, days) {
-     return DateAdd(date, days, "days")
+    return DateAdd(date, days, "days")
 }
-FormatDate(date){
+FormatDate(date) {
     return FormatTime(date, "dd MMM yyyy")
 }
-DateDiff__Custom(date){
-    return DateDiff(A_Now,date,"days")
+DateDiff__Custom(date) {
+    return DateDiff(A_Now, date, "days")
 }
 DateParse(str, americanOrder := 0) {
     ; Definition of several RegExes
@@ -356,4 +553,100 @@ DateParse(str, americanOrder := 0) {
         }
     }
     return retVal
+}
+
+checkPhoneNumber(phoneNumber, filename) {
+    filePath := Format("{1}\{2}", A_ScriptDir, filename)
+    ; Read the file contents
+    fileContents := FileRead(filePath)
+    ; Split the file contents into lines
+    lines := StrSplit(fileContents, "`n")
+
+    ; Iterate over each line
+    for line in lines
+    {
+        ; Split the line into columns
+        columns := StrSplit(line, ",")
+        ; Check if the phone number matches the first column
+        if (columns[1] = phoneNumber)
+        {
+            ; Display the note from the second column
+            return columns[2]
+        }
+    }
+
+}
+
+
+DisplayInfo(key, info) {
+    infoStr := "Code: " key "`n"
+    for k, v in info {
+        infoStr .= k ": " v "`n"
+    }
+    return infoStr
+}
+GetInfoByCodeOrCompletionCode(codes, value) {
+    if (codes.Has(value))
+        return DisplayInfo(value, codes[value])
+
+
+    for key, info in codes {
+        if (info.Has("Mã hoàn ứng") && (info["Mã hoàn ứng"] = value))
+            return DisplayInfo(key, info)
+
+    }
+}
+
+loopkup(dataLS, key) {
+    if dataLS.HasOwnProp(key) = 1 {
+        return dataLS.GetOwnPropDesc(key).Value
+    }
+    else {
+        return "Key not found"
+    }
+}
+
+ProcessAutomation(action) {
+    ; Ô dropdown hành động - chọn dang ky
+    Send "{Tab}"
+    Sleep 1000
+    if (action = 1)
+        Send "71"
+    else if (action = 2) {
+        Send "7"
+        Sleep 500
+        Send "{Down}"
+    }
+    else if (action = 3) {
+        Send "Mong"
+    }
+    Sleep 500
+    Send "{Enter}"
+    Sleep 300
+    Send "{Tab}"
+    Sleep 500
+    ; Ô chọn cảm xúc KH
+    Send "Hài lòng"
+    Sleep 500
+    Send "{Enter}"
+    Sleep 500
+    Send "{Tab}"
+    Sleep 500
+    ; Ô mô tả nguyên nhân phía KH
+    Send "KHYC"
+    Sleep 500
+    Send "{Tab}"
+    Sleep 500
+    ; Ô mô tả cảm xúc phía KH
+    Send "OK"
+    Sleep 500
+    Send "{Tab}"
+    ; Ô mô tả cảm xúc phía KH
+    Sleep 500
+    Send "Yeu cau ve dich vu  cua Quy khach da duoc xu ly. Chi tiet lien he 9090, MobiFone han hanh duoc phuc vu."
+    Sleep 2000
+    Send "{Tab}"
+    Sleep 500
+    ; Chọn ô nhập
+    Send "{Enter}"
 }
