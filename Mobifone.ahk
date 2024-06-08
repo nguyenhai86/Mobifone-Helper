@@ -346,7 +346,16 @@ PgDn:: {
         }
     }
 }
+^+d::{
+    tiLeDaiLy := 0.159
+    tiLeThucNhan := 0.127
+    IB := InputBox("Nhập giá gói cước", "Tinh hoa hong", "w150 h100")
+    editValue := Trim(IB.Value)
 
+    If editValue{
+    MsgBox Format("Hoa hong dai ly: {1}`n`nHoa hong thuc nhan: {2}", Round(editValue*tiLeDaiLy),Round(editValue*tiLeThucNhan) )
+    }
+}
 ;* Tong dai ung tien
 ^+u:: {
     codes := Map(
