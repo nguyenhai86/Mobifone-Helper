@@ -213,9 +213,10 @@ PgDn:: {
     Mobifone := ["89", "90", "93", "70", "76", "77", "78", "79"]
     Vinaphone := ["88", "91", "94", "83", "84", "85", "81", "82"]
     GtelMobile := ["99", "59"]
+    VietNamMobile := ["92", "52","56","58"]
     Itelecom := ["87"]
 
-    tongDai := { Viettel: "18008098 - Cuoc goi mien phi", Mobifone: "18001090 - Cuoc goi mien phi", Vinaphone: "18001091 - Cuoc goi mien phi", GtelMobile: "0993 888 198 - Cuoc goi thong thuong", Itelecom: "0877 087 087 - Cuoc goi thong thuong" }
+    tongDai := { Viettel: "18008098 - Cuoc goi mien phi", Mobifone: "18001090 - Cuoc goi mien phi", Vinaphone: "18001091 - Cuoc goi mien phi", GtelMobile: "0993 888 198 - Cuoc goi thong thuong", VietNamMobile: "789 - Mien phi / 0922789789 - Cuoc goi thong thuong", Itelecom: "0877 087 087 - Cuoc goi thong thuong" }
 
     oldClipboard := A_Clipboard
     Send "^c"
@@ -274,6 +275,17 @@ PgDn:: {
         }
     }
 
+    ; VietNamMobile
+    if status = 0 {
+        for index, value in VietNamMobile {
+            if (prefix = value) {
+                result := Format("So dien thoai {1} - {2} `n`nTong dai: {3}", phoneNumber, "VietNamMobile", tongDai.VietNamMobile)
+                status := 1
+                break
+            }
+        }
+    }
+
     ; Itelecom
     if status = 0 {
         for index, value in Itelecom {
@@ -318,7 +330,7 @@ PgDn:: {
             Send "https://tracuu.mobifone.vn/1090/mobicard.jsp"
             Sleep 500
             Send "{Enter}"
-            Sleep 1000
+            Sleep 1500
 
             Send phoneNumber
             Sleep 300
@@ -432,7 +444,7 @@ F3:: {
 
 F5:: {
     Send "^r"
-    Sleep 150
+    Sleep 100
     Send "{Enter}"
 }
 
