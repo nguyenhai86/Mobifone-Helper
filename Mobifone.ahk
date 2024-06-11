@@ -213,7 +213,7 @@ PgDn:: {
     Mobifone := ["89", "90", "93", "70", "76", "77", "78", "79"]
     Vinaphone := ["88", "91", "94", "83", "84", "85", "81", "82"]
     GtelMobile := ["99", "59"]
-    VietNamMobile := ["92", "52","56","58"]
+    VietNamMobile := ["92", "52", "56", "58"]
     Itelecom := ["87"]
 
     tongDai := { Viettel: "18008098 - Cuoc goi mien phi", Mobifone: "18001090 - Cuoc goi mien phi", Vinaphone: "18001091 - Cuoc goi mien phi", GtelMobile: "0993 888 198 - Cuoc goi thong thuong", VietNamMobile: "789 - Mien phi / 0922789789 - Cuoc goi thong thuong", Itelecom: "0877 087 087 - Cuoc goi thong thuong" }
@@ -302,6 +302,10 @@ PgDn:: {
     MsgBox result
 }
 
+MButton:: {
+    Send "{``}"
+}
+
 ;* Tu dong lay SDT
 `:: {
     ; Tìm cửa sổ có tiêu đề "Call Information"
@@ -346,14 +350,14 @@ PgDn:: {
         }
     }
 }
-^+d::{
+^+d:: {
     tiLeDaiLy := 0.159
     tiLeThucNhan := 0.127
     IB := InputBox("Nhập giá gói cước", "Tinh hoa hong", "w150 h100")
     editValue := Trim(IB.Value)
 
-    If editValue{
-    MsgBox Format("Hoa hong dai ly: {1}`n`nHoa hong thuc nhan: {2}", Round(editValue*tiLeDaiLy),Round(editValue*tiLeThucNhan) )
+    If editValue {
+        MsgBox Format("Hoa hong dai ly: {1}`n`nHoa hong thuc nhan: {2}", Round(editValue * tiLeDaiLy), Round(editValue * tiLeThucNhan))
     }
 }
 ;* Tong dai ung tien
