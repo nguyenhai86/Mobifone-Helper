@@ -166,7 +166,19 @@ global fileBlacklist := "blacklist.csv"
     }
     MyGui.Show()
 }
-
+^+g:: {
+    oldClipboard := A_Clipboard
+    Send "^c"
+    Sleep 500
+    filePath := Format("{1}\{2}", A_ScriptDir, "Package")
+    Run filePath
+    Sleep 1000
+    A_Clipboard := oldClipboard
+}
+^Escape:: {
+    if WinActive("ahk_class Package") || WinActive("ahk_class" "WindowsForms10.Window.8.app.0.1ca0192_r10_ad1")
+        WinClose
+}
 ;* Đếm số cuộc gọi
 global countCall := 0
 ^PgDn:: {
@@ -181,7 +193,7 @@ global countCall := 0
 PgDn:: {
     global countCall
     countCall := countCall + 1
-    Sleep 100
+    Sleep 200
     Send "{Down}"
 }
 
@@ -308,6 +320,7 @@ MButton:: {
 
 ;* Tu dong lay SDT
 `:: {
+    countCall := countCall + 1
     ; Tìm cửa sổ có tiêu đề "Call Information"
     CallInfoTitle := "Call Information"
     winInfoCall := WinExist(CallInfoTitle)
