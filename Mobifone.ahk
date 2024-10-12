@@ -52,6 +52,24 @@ global fileBlacklist := "blacklist.csv"
     MsgBox(FormatDate(DateAdd_Custom(date, days)))
     return
 }
+;* Cộng 45 ngày theo Clipboard
+^+4:: {
+    days := 45
+    oldClipboard := A_Clipboard
+    Send "^c"
+    Sleep 500
+    dateString := Trim(A_Clipboard)
+    A_Clipboard := oldClipboard
+    date := 0
+    try {
+        date := DateParse(dateString)
+    } catch Error as e {
+        date := A_Now
+    }
+    A_Clipboard := oldClipboard
+    MsgBox(FormatDate(DateAdd_Custom(date, days)))
+    return
+}
 ;* Cộng 60 ngày theo Clipboard
 ^+6:: {
     days := 60
@@ -91,16 +109,51 @@ global fileBlacklist := "blacklist.csv"
 
     result := "Không hợp lệ"
     IB := InputBox("Nhập giá gói cước", "Gia han linh hoat", "w150 h100")
-    editValue := Trim(IB.Value)
+    editValue := StrLower(Trim(IB.Value))
     if IB.Result != "Cancel" {
-        if editValue = "pt120" || editValue = "PT120" || editValue = "pT120" || editValue = "Pt120" {
+        if editValue = "pt120"
+        {
             price := 120000
             priceOnDay := 4000
             chiaLayNguyen := Floor(stringMoney / priceOnDay)
             soTienChinh := chiaLayNguyen * priceOnDay
-            stringPT120 := Format("Gói PT120 - Tổng giá gói: {1}đ`n`nGia hạn lần đầu: {2}đ cho {3} ngày`n`nGia hạn lần sau: {4}đ cho {5} ngày", 120000, stringMoney, chiaLayNguyen, 120000 - stringMoney, 30 - chiaLayNguyen)
+            stringPT120 := Format("Gói PT120 - Tổng giá gói: {1}đ`n`nGia hạn lần đầu: {2}đ cho {3} ngày`n`nGia hạn lần sau: {4}đ cho {5} ngày`n`nGHLH Min: 10000đ", 120000, stringMoney, chiaLayNguyen, 120000 - stringMoney, 30 - chiaLayNguyen)
             result := stringPT120
         }
+        else if editValue = "kc90"
+            result := "GHLH KC90: 12.000đ"
+        else if editValue = "tk135"
+            result := "GHLH TK135: 4.500đ"
+        else if editValue = "c120"
+            result := "GHLH C120: 20.000đ"
+        else if editValue = "c90"
+            result := "GHLH C90: 12.000đ"
+        else if editValue = "kc120"
+            result := "GHLH KC120: 16.000đ"
+        else if editValue = "kc150"
+            result := "GHLH KC150: 25.000đ"
+        else if editValue = "pt70"
+            result := "GHLH PT70: 2.500đ"
+        else if editValue = "pt90"
+            result := "GHLH PT90: 3000đ"
+        else if editValue = "c120n"
+            result := "GHLH C120N: 16.000đ"
+        else if editValue = "c120k"
+            result := "GHLH C120K: 28.000đ"
+        else if editValue = "c120t"
+            result := "GHLH C120T: 28.000đ"
+        else if editValue = "tk159"
+            result := "GHLH TK159: 21.200đ"
+        else if editValue = "mxh80"
+            result := "GHLH MXH80: 6.000đ"
+        else if editValue = "mxh90"
+            result := "GHLH MXH90: 6.000đ"
+        else if editValue = "mxh100"
+            result := "GHLH MXH100: 7.000đ"
+        else if editValue = "mxh120"
+            result := "GHLH MXH120: 20.000đ"
+        else if editValue = "mxh150"
+            result := "GHLH MXH150: 30.000đ"
         else {
             priceOnDay := editValue / 30
             firstDay := stringMoney / priceOnDay
@@ -167,35 +220,26 @@ global fileBlacklist := "blacklist.csv"
     MyGui.Show()
 }
 ^+g:: {
+    packageName := "Package"
     oldClipboard := A_Clipboard
     Send "^c"
-    Sleep 500
-    filePath := Format("{1}\{2}", A_ScriptDir, "Package")
+    Sleep 100
+
+    if WinExist(packageName)
+        WinClose packageName
+    Sleep 100
+    ; run Package
+    filePath := Format("{1}\{2}", A_ScriptDir, packageName)
     Run filePath
-    Sleep 1000
-    A_Clipboard := oldClipboard
+    if WinWaitActive(packageName, , 3) {
+        A_Clipboard := oldClipboard
+    }
 }
 ^Escape:: {
     if WinActive("ahk_class Package") || WinActive("ahk_class" "WindowsForms10.Window.8.app.0.1ca0192_r10_ad1")
         WinClose
 }
-;* Đếm số cuộc gọi
-global countCall := 0
-^PgDn:: {
-    global countCall
-    countCall := 0
-    MsgBox Format("Số lượng CG được reset về {1}", countCall)
-}
-+PgDn:: {
-    global countCall
-    MsgBox Format("So luong cuoc goi: {1}", countCall)
-}
-PgDn:: {
-    global countCall
-    countCall := countCall + 1
-    Sleep 200
-    Send "{Down}"
-}
+
 
 ;* Tra cuu cac profile dang ky goi DT20
 ^+y:: {
@@ -228,7 +272,7 @@ PgDn:: {
     VietNamMobile := ["92", "52", "56", "58"]
     Itelecom := ["87"]
 
-    tongDai := { Viettel: "18008098 - Cuoc goi mien phi", Mobifone: "18001090 - Cuoc goi mien phi", Vinaphone: "18001091 - Cuoc goi mien phi", GtelMobile: "0993 888 198 - Cuoc goi thong thuong", VietNamMobile: "789 - Mien phi / 0922789789 - Cuoc goi thong thuong", Itelecom: "0877 087 087 - Cuoc goi thong thuong" }
+    tongDai := { Viettel: "18008098 - Cuoc goi mien phi", Mobifone: "18001090 - Cuoc goi mien phi", Vinaphone: "18001091 - Cuoc goi mien phi", GtelMobile: "0993 196 196 - Cuoc goi thong thuong", VietNamMobile: "789 - Mien phi / 0922789789 - Cuoc goi thong thuong", Itelecom: "0877 087 087 - Cuoc goi thong thuong" }
 
     oldClipboard := A_Clipboard
     Send "^c"
@@ -314,55 +358,6 @@ PgDn:: {
     MsgBox result
 }
 
-MButton:: {
-    Send "{``}"
-}
-
-;* Tu dong lay SDT
-`:: {
-    countCall := countCall + 1
-    ; Tìm cửa sổ có tiêu đề "Call Information"
-    CallInfoTitle := "Call Information"
-    winInfoCall := WinExist(CallInfoTitle)
-    if winInfoCall
-    {
-        ; Đưa cửa sổ lên trước
-        WinActivate(winInfoCall)
-        Sleep 200
-        ; Gửi phím Enter
-        Send "{Enter}"
-        Sleep 200
-        phoneNumber := A_Clipboard
-
-        VMSTitle := "Customer Care of VMS"
-        winVMS := WinExist(VMSTitle)
-        if winVMS
-        {
-            ; Đưa cửa sổ lên trước
-            WinActivate(winVMS)
-            Sleep 400
-
-            Send "!d"
-            Sleep 200
-            Send "https://tracuu.mobifone.vn/1090/mobicard.jsp"
-            Sleep 500
-            Send "{Enter}"
-            Sleep 1500
-
-            Send phoneNumber
-            Sleep 300
-            Send "{Enter}"
-
-            try {
-                message := checkPhoneNumber(phoneNumber, fileBlacklist)
-                if message {
-                    MsgBox message
-                }
-            } catch Error as e {
-            }
-        }
-    }
-}
 ^+d:: {
     tiLeDaiLy := 0.159
     tiLeThucNhan := 0.127
@@ -396,57 +391,98 @@ MButton:: {
 
 ^+l:: {
     dataLS := {}
-    dataLS.DNFC := "Đấu số MobiCard mới (do chuyển từ MobiGold sang)"
-    dataLS.DNGQ := "Đấu số MobiQ mới (do chuyển từ MobiGold sang)"
-    dataLS.GLZO := "MobiGold qua MobiZone"
-    dataLS.FQTE := "Chuyển MobiGold sang Q_TEEN"
-    dataLS.DPFC := "Chuyển MobiGold sang FastConnect trả trước"
-    dataLS.DNQT := "Chuyển MobiGold sang Mobi Qteen"
-    dataLS.DNG3 := "Chuyển MobiGold sang Mobi365"
-    dataLS.DNFU := "Chuyển MobiGold sang Mobi4U"
-    dataLS.DNFSV := "Chuyển MobiGold sang MobiQ_SV"
-    dataLS.DN2S := "Đấu nối Sim 2 số"
-    dataLS.DNGD := "Đấu nối hay khôi phục theo giấy duyệt"
-    dataLS.DOIS := "Đối soát"
-    dataLS.HUY := "Đấu F1 sửa sai TDN"
-    dataLS.KP := "Khôi phục số đã hủy"
-    dataLS.VMS := "Đấu mới"
-    dataLS.STH := "Sim Thu TT"
-    dataLS.DNST := "Đấu nối sim thử"
-    dataLS.CHS := "Đấu F1 sửa sai cửa hàng (test)"
-    dataLS.DBO := "Thay đổi giữa các hình thức trả trước (do KH tự chuyển - bấm Note để xem chi tiết)"
-    dataLS.KHYC := "Thay đổi giữa các hình thức trả trước (do KH tự chuyển - bấm Note để xem chi tiết)"
-    dataLS.QSV := "Chuyển từ trả trước khác sang Q-SV"
-    dataLS.QTE := "Chuyển từ trả trước khác sang Q-Teen"
-    dataLS.INAC := "Chặn 1 chiều do hết hạn sử dụng (Mobi4U là do hết tiền)"
-    dataLS.CSKS := "Chặn 1 chiều do nghi ngờ sim kích hoạt sẵn"
-    dataLS.DEAC := "Chặn 2 chiều do hết hạn nghe"
-    dataLS.ACTI := "Mở 2 chiều do nạp tiền"
-    dataLS.RES := "Chặn 1 chiều do hết tiền (nhưng còn ngày sử dụng)"
-    dataLS.CA3 := "Cắt hủy/ cắt hẳn trả trước do KH hủy số không sử dụng"
-    dataLS.CA7 := "Hủy sim 2 số, thanh lý 1 số"
-    dataLS.ACTI := "Kích hoạt số trả trước mới"
-    dataLS.GKK := "MobiGold hòa mạng mới (do Mobi365 chuyển sang)"
-    dataLS.CFKK := "MobiGold hòa mạng mới (do MobiCard chuyển sang)"
-    dataLS.MCVU := "MobiGold số công vụ hòa mạng mới (số mới)"
-    dataLS.MS := "MobiGold hòa mạng mới (số mới)"
-    dataLS.QFON := "MobiGold hòa mạng mới (do MobiQ chuyển sang)"
-    dataLS.QTEF := "MobiGold hòa mạng mới (do Q-Teen chuyển sang)"
-    dataLS.SVFKK := "MobiGold hòa mạng mới (do Q-Student chuyển sang)"
-    dataLS.UFKK := "MobiGold hòa mạng mới (do Mobi4U chuyển sang)"
-    dataLS.ZFKK := "MobiGold hòa mạng mới (do MobiZone chuyển sang)"
-    dataLS.CCX := "Sim tạm khóa 2 chiều do không có TT"
-    dataLS.DKKH := "Chặn/ hủy số Mobi4U không kích hoạt (khóa số sau 30 ngày)"
-    dataLS.HNAC := "Sim khóa do hết hạn sử dụng"
-    dataLS.HQUY := "Hủy số chưa hòa mạng (khóa sau 30 ngày)"
-    dataLS.HSIM := "Sim tạm khóa 2 chiều do hủy số"
-    dataLS.MFQT := "Chuyển từ trả trước khác sang Q-Teen"
-    dataLS.TK6T := "Khóa số 2 chiều sau 6 tháng (31 ngày)"
-    dataLS.VINA := "Cắt hủy/ cắt hẳn MobiGold vì KH chuyển sang Vinaphone"
-    dataLS.ZFKK := "MobiZone chuyển sang MobiGold: Còn tiền"
-    dataLS.CCXN := "Chặn do nghi ngờ sim kích hoạt sẵn"
-    dataLS.CĐSS := "Chặn do nghi ngờ sim kích hoạt sẵn"
-    dataLS.KDID := "Chặn do nghi ngờ sim kích hoạt sẵn"
+    dataLS.3GKK := 'MobiGold hòa mạng mới (do Mobi365 chuyển sang) / Mobi365 chuyển sang MobiGold: có chuyển tiền' ;
+    dataLS.CFKK := 'MobiGold hòa mạng mới (do MobiCard chuyển sang) / Cắt MobiCard để chuyển sang MobiGold' ;
+    dataLS.MCVU := 'MobiGold số công vụ hòa mạng mới (số mới)' ;
+    dataLS.MS := 'MobiGold hòa mạng mới (số mới)' ;
+    dataLS.QFON := 'MobiGold hòa mạng mới (do MobiQ chuyển sang)' ;
+    dataLS.QTEF := 'MobiGold hòa mạng mới (do Q-Teen chuyển sang) / Q-Teen chuyển sang MobiGold' ;
+    dataLS.SVFKK := 'MobiGold hòa mạng mới (do Q-Student chuyển sang) / Q-Student chuyển sang MobiGold' ;
+    dataLS.UFKK := 'MobiGold hòa mạng mới (do Mobi4U chuyển sang) / Mobi4U chuyển sang MobiGold' ;
+    dataLS.ZFKK := 'MobiGold hòa mạng mới (do MobiZone chuyển sang) / MobiZone chuyển sang MobiGold: Còn tiền' ;
+    dataLS.CHS := 'Thay đổi thông tin do thông tin trước đó CH/ ĐLC cập nhật bị sai / Chặn 2 chiều do cửa hàng sau' ;
+    dataLS.DTEN := '- Đổi tên cá nhân := cập nhật thêm tên cá nhân sau tên doanh nghiệp- Đổi tên doanh nghiệp := do doanh nghiệp đổi tên' ;
+    dataLS.KHYC := 'Thay đổi dịch vụ do KHYC / Thay sim / Thay đổi giữa các hình thức trả trước KH tự chuyển / Chặn 2 chiều do khách hàng yêu cầu' ;
+    dataLS.NTNC := 'Nhắn tin thông báo cước' ;
+    dataLS.NTTB := 'Nhắn tin nhắc cước hay nhắn nội dung khác' ;
+    dataLS.WARN := 'Nhắn tin nhắc cước hay nhắn tin báo đỏ' ;
+    dataLS.PAID := 'Mở 2 chiều do thanh toán nợ cước' ;
+    dataLS.PAID := 'Mở 1 chiều do KH thanh toán cước' ;
+    dataLS.XMD := 'Mở 1 chiều do đã xác minh được địa chỉ thuê bao' ;
+    dataLS.128K := 'Đổi sim qua sim dung lượng 128K' ;
+    dataLS.CA64 := 'Đổi sim qua sim dung lượng 64K' ;
+    dataLS.DSMP := 'Đổi sim miễn phí' ;
+    dataLS.CCQ := 'Thuê bao được đấu mới do CCQ và chủ cũ đã thanh toán hết cước / Chặn 2 chiều do chuyển chủ quyền / Cắt hủy/ cắt hẳn MobiGold để chuyển chủ quyền và chủ cũ đã thanh toán hết cước' ;
+    dataLS.CQC := 'Thuê bao được đấu mới do chuyển chủ quyền và KH mới đồng ý thanh toán cước của chủ cũ' ;
+    dataLS.ANNI := 'Chặn 1 chiều / 2 chiều do yêu cầu từ Bộ Công An' ;
+    dataLS.CA1 := 'Chặn 2 chiều do mất máy / Chặn 1 chiều do mất máy' ;
+    dataLS.CA4 := 'Chặn 2 chiều do mất sim / Chặn 1 chiều do mất sim' ;
+    dataLS.DEBT := 'Chặn 1 chiều / Chặn 2 chiều do nợ cước' ;
+    dataLS.KHD := 'Chặn 1 chiều do không dùng/Chặn 2 chiều do KH yêu cầu tạm khóa' ;
+    dataLS.KHDC := 'Chặn 1 chiều / Chặn 2 chiều do địa chỉ không có thực, giả mạo hồ sơ' ;
+    dataLS.KNAI := 'Chặn 1 / 2 chiều do khách hàng khiếu nại' ;
+    dataLS.KVMS := 'Tạm khóa 2 chiều - VMS' ;
+    dataLS.KXD := 'Chặn 1 / 2 chiều do không xác minh được thông tin thuê bao' ;
+    dataLS.QROI := 'Chặn 1 / 2 chiều do thuê bao quấy rối' ;
+    dataLS.THLY := 'Chặn 2 chiều do khách hàng yêu cầu thanh lý hợp đồng' ;
+    dataLS.XMB := 'Chặn 1 / 2 chiều do khách hàng cung cấp sai địa chỉ' ;
+    dataLS.BADO := 'Chặn 1 chiều do TB sử dụng vượt quá mức cước ứng trước, báo đỏ' ;
+    dataLS.HSO := 'Chặn 1 chiều do không có hồ sơ' ;
+    dataLS.OTH := 'Chặn 1 chiều do các lý do khác' ;
+    dataLS.CSKS := 'Chặn 1 chiều do nghi ngờ sim kích hoạt sẵn' ;
+    dataLS.3FON := 'Mobi365 chuyển sang MobiGold: không còn tiền' ;
+    dataLS.CA05 := 'Cắt hủy/ cắt hẳn MobiGold trong vòng 5 ngày tính từ ngày hòa mạng (đã bỏ nghiệp vụ này)' ;
+    dataLS.CA2 := 'Cắt hủy/ cắt hẳn MobiGold do sóng yếu' ;
+    dataLS.CA3 := 'Cắt hủy/ cắt hẳn MobiGold do KH hủy số không sử dụng; Cắt hủy/ cắt hẳn trả trước do KH hủy số không sử dụng' ;
+    dataLS.CCNV := 'Cắt hủy/ cắt hẳn MobiGold để chuyển sang thuê bao nghiệp vụ' ;
+    dataLS.CCVU := 'Cắt hủy/ cắt hẳn MobiGold để chuyển sang thuê bao công vụ' ;
+    dataLS.CMCV := 'Chuyển máy công vụ' ;
+    dataLS.CNV := 'Cắt hủy/ cắt hẳn MobiGold nghiệp vụ' ;
+    dataLS.CTHU := 'Cắt hủy/ cắt hẳn MobiGold thuộc sim thử' ;
+    dataLS.DEAC := 'Chặn 2 chiều do hết hạn nghe / Thuê bao trả trước bị cắt hủy/ delete do bị khóa 2 chiều quá hạn (hiện nay là 31 ngày)' ;
+    dataLS.DPFC := 'Cắt hủy/ cắt hẳn MobiGold để chuyển sang Fast Connect trả trước' ;
+    dataLS.FONS := 'Cắt hủy/ cắt hẳn MobiGold vì KH chuyển sang SFONE' ;
+    dataLS.FONV := 'Cắt hủy/ cắt hẳn MobiGold vì KH chuyển sang Viettel' ;
+    dataLS.GOZO := 'Cắt hủy/ cắt hẳn MobiGold để chuyển sang MobiZone' ;
+    dataLS.HOSO := 'Cắt hủy/ cắt hẳn MobiGold do không có hồ sơ' ;
+    dataLS.KKH := 'MobiGold chuyển sang MobiCard, không kích hoạt' ;
+    dataLS.M365 := 'Mobi365 chuyển sang MobiGold' ;
+    dataLS.MEZ := 'Cắt hủy/ cắt hẳn MobiGold để chuyển sang MobiEZ' ;
+    dataLS.MF4U := 'Cắt hủy/ cắt hẳn MobiGold để chuyển sang Mobi4U' ;
+    dataLS.MFQT := 'Cắt hủy/ cắt hẳn MobiGold để chuyển sang Q-Teen' ;
+    dataLS.MFSV := 'Cắt hủy/ cắt hẳn MobiGold để chuyển sang Q-Student' ;
+    dataLS.MGM3 := 'Cắt hủy/ cắt hẳn MobiGold để chuyển sang Mobi365' ;
+    dataLS.MGMQ := 'Cắt hủy/ cắt hẳn MobiGold để chuyển sang MobiQ' ;
+    dataLS.MOBI := 'Cắt hủy/ cắt hẳn MobiGold để chuyển sang MobiCard' ;
+    dataLS.NO2T := 'Cắt hủy/ cắt hẳn MobiGold do nợ cước quá' ;
+    dataLS.QFKK := 'Cắt MobiQ để chuyển sang MobiGold' ;
+    dataLS.SAIS := 'Cắt hủy/ cắt hẳn MobiGold do CH/ ĐLC đấu nối số sai qui định' ;
+    dataLS.TK6T := 'Cắt hủy/ cắt hẳn MobiGold do thuê bao khóa 2 chiều quá 6 tháng (hiện nay là quá 31 ngày)' ;
+    dataLS.VINA := 'Cắt hủy/ cắt hẳn MobiGold vì KH chuyển sang ViNaPhone' ;
+    dataLS.DNTD := 'Đấu số trả trước mới (số mới - đấu nối tự động)' ;
+    dataLS.DNFC := 'Đấu số MobiCard mới (do chuyển từ MobiGold sang)' ;
+    dataLS.DNGQ := 'Đấu số MobiQ mới (do chuyển từ MobiGold sang)' ;
+    dataLS.GLZO := 'MobiGold qua MobiZone' ;
+    dataLS.FQTE := 'Chuyển MobiGold sang Q_TEEN' ;
+    dataLS.DNQT := 'Chuyển MobiGold sang Mobi Qteen' ;
+    dataLS.DNG3 := 'Chuyển MobiGold sang Mobi365' ;
+    dataLS.DNFU := 'Chuyển MobiGold sang Mobi4U' ;
+    dataLS.DNFSV := 'Chuyển MobiGold sang MobiQ_SV' ;
+    dataLS.DN2S := 'Đấu nối Sim 2 số' ;
+    dataLS.DNGD := 'Đấu nối hay khôi phục theo giấy duyệt' ;
+    dataLS.DOIS := 'Đối soát' ;
+    dataLS.HUY := 'Đấu F1 sửa sai TDN' ;
+    dataLS.KP := 'Khôi phục số đã hủy' ;
+    dataLS.VMS := 'Đấu mới' ;
+    dataLS.STH := 'Sim Thu TT' ;
+    dataLS.DNST := 'Đấu nối sim thử' ;
+    dataLS.DBO := 'Thay đổi giữa các hình thức trả trước (do KH tự chuyển - bấm Note để xem chi tiết)' ;
+    dataLS.QSV := 'Chuyển từ trả trước khác sang Q-SV' ;
+    dataLS.QTE := 'Chuyển từ trả trước khác sang Q-Teen' ;
+    dataLS.INAC := 'Chặn 1 chiều do hết hạn sử dụng (Mobi4U là do hết tiền)' ;
+    dataLS.ACTI := 'Mở 2 chiều do nạp tiền / Kích hoạt số trả trước mới' ;
+    dataLS.RES := 'Chặn 1 chiều do hết tiền (nhưng còn ngày sử dụng)' ;
+    dataLS.CA7 := 'Hủy sim 2 số, thanh lý 1 số' ;
 
     oldClipboard := A_Clipboard
     Send "^c"
@@ -456,21 +492,22 @@ MButton:: {
     A_Clipboard := oldClipboard
     MsgBox loopkup(dataLS, key)
 }
-
-;* Sendkey
 F1:: {
-    ProcessAutomation(1)
+    Send "^1"
 }
 F2:: {
-    ProcessAutomation(2)
+    Send "^2"
 }
 F3:: {
-    ProcessAutomation(3)
+    Send "^3"
+}
+F4:: {
+    Send "^4"
 }
 
 F5:: {
     Send "^r"
-    Sleep 100
+    Sleep 200
     Send "{Enter}"
 }
 
@@ -662,52 +699,4 @@ loopkup(dataLS, key) {
     else {
         return "Key not found"
     }
-}
-
-ProcessAutomation(action) {
-    ; Ô dropdown hành động - chọn dang ky
-    Send "{Tab}"
-    Sleep 1000
-    if (action = 1)
-        Send "71"
-    else if (action = 2) {
-        Send "7"
-        Sleep 500
-        Send "{Down}"
-    }
-    else if (action = 3) {
-        Send "Mong"
-    }
-    Sleep 500
-    Send "{Enter}"
-    Sleep 300
-    Send "{Tab}"
-    Sleep 500
-    ; Ô chọn cảm xúc KH
-    Send "Hài lòng"
-    Sleep 500
-    Send "{Enter}"
-    Sleep 500
-    Send "{Tab}"
-    Sleep 500
-    ; Ô mô tả nguyên nhân phía KH
-    Send "KHYC"
-    Sleep 500
-    Send "{Tab}"
-    Sleep 500
-    ; Ô mô tả cảm xúc phía KH
-    Send "OK"
-    Sleep 500
-    Send "{Tab}"
-    ; Ô mô tả cảm xúc phía KH
-    Sleep 500
-    If action = 1 || action = 2
-        Send "Yeu cau ve dich vu Mobile Internet cua Quy khach da duoc xu ly. Chi tiet lien he 9090, MobiFone han hanh duoc phuc vu."
-    else If action = 3
-        Send "Yeu cau ve dich vu  cua Quy khach da duoc xu ly. Chi tiet lien he 9090, MobiFone han hanh duoc phuc vu."
-    Sleep 2000
-    Send "{Tab}"
-    Sleep 500
-    ; Chọn ô nhập
-    Send "{Enter}"
 }
