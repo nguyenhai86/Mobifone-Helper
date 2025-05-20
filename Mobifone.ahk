@@ -299,56 +299,56 @@
 ;* Gia hạn linh hoạt
 ^+g:: {
     dataPackage := {}
-    dataPackage.KC90 := 'Gói KC90 GHLH 12.000 đ' ;
-    dataPackage.TK135 := 'Gói TK135 GHLH 4.500 đ' ;
-    dataPackage.C120 := 'Gói C120 GHLH 20.000 đ' ;
-    dataPackage.C90 := 'Gói C90 GHLH 12.000 đ' ;
-    dataPackage.C90N := 'Gói C90N GHLH 12.000 đ' ;
-    dataPackage.KC120 := 'Gói KC120 GHLH 16.000 đ' ;
-    dataPackage.KC150 := 'Gói KC150 GHLH 25.000 đ' ;
-    dataPackage.PT120 := 'Gói PT120 GHLH 10.000 đ' ;
-    dataPackage.PT70 := 'Gói PT70 GHLH 2.500 đ' ;
-    dataPackage.PT90 := 'Gói PT90 GHLH 3.000 đ' ;
-    dataPackage.C120N := 'Gói C120N GHLH 16.000 đ' ;
-    dataPackage.C120K := 'Gói C120K GHLH 28.000 đ' ;
-    dataPackage.C120T := 'Gói C120T GHLH 28.000 đ' ;
-    dataPackage.TK159 := 'Gói TK159 GHLH 21.200 đ' ;
-    dataPackage.TK219 := 'Gói TK219 GHLH 29.200 đ' ;
-    dataPackage.MXH80 := 'Gói MXH80 GHLH 6.000 đ' ;
-    dataPackage.MXH90 := 'Gói MXH90 GHLH 6.000 đ' ;
-    dataPackage.MXH100 := 'Gói MXH100 GHLH 7.000 đ' ;
-    dataPackage.MXH120 := 'Gói MXH120 GHLH 20.000 đ' ;
-    dataPackage.MXH150 := 'Gói MXH150 GHLH 30.000 đ' ;
-    dataPackage.C50N := 'Gói C50N GHLH 40.000 đ' ;
-    dataPackage.FD60 := 'Gói FD60 GHLH 2.000 đ' ;
-    dataPackage.21G := 'Gói 21G GHLH 4.000 đ' ;
-    dataPackage.24G := 'Gói 24G GHLH 6.600 đ' ;
-    dataPackage.12C120 := 'Gói 12C120 GHLH 120.000 đ' ;
-    dataPackage.12C90N := 'Gói 12C90N GHLH 90.000 đ' ;
-    dataPackage.12C50N := 'Gói 12C50N GHLH 50.000 đ' ;
-    dataPackage.12KC150 := 'Gói 12KC150 GHLH 150.000 đ' ;
-    dataPackage.12KC120 := 'Gói 12KC120 GHLH 120.000 đ' ;
-    dataPackage.12KC90 := 'Gói 12KC90 GHLH 90.000 đ' ;
-    dataPackage.12PT120 := 'Gói 12PT120 GHLH 120.000 đ' ;
-    dataPackage.12PT90 := 'Gói 12PT90 GHLH 90.000 đ' ;
-    dataPackage.12PT70 := 'Gói 12PT70 GHLH 70.000 đ' ;
-    dataPackage.12MXH150 := 'Gói 12MXH150 GHLH 150.000 đ' ;
-    dataPackage.12MXH120 := 'Gói 12MXH120 GHLH 120.000 đ' ;
-    dataPackage.12MXH100 := 'Gói 12MXH100 GHLH 100.000 đ' ;
-    dataPackage.12MXH90 := 'Gói 12MXH90 GHLH 90.000 đ' ;
-    dataPackage.12MXH80 := 'Gói 12MXH80 GHLH 80.000 đ' ;
-    dataPackage.12TK219 := 'Gói 12TK219 GHLH 219.000 đ' ;
-    dataPackage.12TK159 := 'Gói 12TK159 GHLH 159.000 đ' ;
-    dataPackage.12TK135 := 'Gói 12TK135 GHLH 135.000 đ' ;
-    dataPackage.NA70 := 'Gói NA70 GHLH 70.000 đ' ;
-    dataPackage.NA90 := 'Gói NA90 GHLH 90.000 đ' ;
-    dataPackage.NA120 := 'Gói NA120 GHLH 120.000 đ' ;
-    dataPackage.MBF30 := 'Gói MBF30 GHLH 10.000 đ' ;
-    dataPackage.EDU100 := 'Gói EDU100 GHLH 10.000 đ' ;
-    dataPackage.AG90 := 'Gói AG90 GHLH 5.000 đ' ;
-    dataPackage.AG100 := 'Gói AG100 GHLH 10.000 đ' ;
-    dataPackage.GG135 := 'Gói GG135 GHLH 5.000 đ' ;
-    dataPackage.GG155 := 'Gói GG155 GHLH 35.000 đ' ;
+    dataPackage.KC90 := '12.000 đ' ;
+    dataPackage.TK135 := '4.500 đ' ;
+    dataPackage.C120 := '20.000 đ' ;
+    dataPackage.C90 := '12.000 đ' ;
+    dataPackage.C90N := '12.000 đ' ;
+    dataPackage.KC120 := '16.000 đ' ;
+    dataPackage.KC150 := '25.000 đ' ;
+    dataPackage.PT120 := '10.000 đ' ;
+    dataPackage.PT70 := '2.500 đ' ;
+    dataPackage.PT90 := '3.000 đ' ;
+    dataPackage.C120N := '16.000 đ' ;
+    dataPackage.C120K := '28.000 đ' ;
+    dataPackage.C120T := '28.000 đ' ;
+    dataPackage.TK159 := '21.200 đ' ;
+    dataPackage.TK219 := '29.200 đ' ;
+    dataPackage.MXH80 := '6.000 đ' ;
+    dataPackage.MXH90 := '6.000 đ' ;
+    dataPackage.MXH100 := '7.000 đ' ;
+    dataPackage.MXH120 := '20.000 đ' ;
+    dataPackage.MXH150 := '30.000 đ' ;
+    dataPackage.C50N := '40.000 đ' ;
+    dataPackage.FD60 := '2.000 đ' ;
+    dataPackage.21G := '4.000 đ' ;   // Không thể bắt đầu bằng số, nên giữ tạm _21G hoặc đổi tên khác
+    dataPackage.24G := '6.600 đ' ;   // Giống trên
+    dataPackage.12C120 := '120.000 đ' ;  // Bắt đầu số, lỗi ngữ pháp
+    dataPackage.12C90N := '90.000 đ' ;
+    dataPackage.12C50N := '50.000 đ' ;
+    dataPackage.12KC150 := '150.000 đ' ;
+    dataPackage.12KC120 := '120.000 đ' ;
+    dataPackage.12KC90 := '90.000 đ' ;
+    dataPackage.12PT120 := '120.000 đ' ;
+    dataPackage.12PT90 := '90.000 đ' ;
+    dataPackage.12PT70 := '70.000 đ' ;
+    dataPackage.12MXH150 := '150.000 đ' ;
+    dataPackage.12MXH120 := '120.000 đ' ;
+    dataPackage.12MXH100 := '100.000 đ' ;
+    dataPackage.12MXH90 := '90.000 đ' ;
+    dataPackage.12MXH80 := '80.000 đ' ;
+    dataPackage.12TK219 := '219.000 đ' ;
+    dataPackage.12TK159 := '159.000 đ' ;
+    dataPackage.12TK135 := '135.000 đ' ;
+    dataPackage.NA70 := '70.000 đ' ;
+    dataPackage.NA90 := '90.000 đ' ;
+    dataPackage.NA120 := '120.000 đ' ;
+    dataPackage.MBF30 := '10.000 đ' ;
+    dataPackage.EDU100 := '10.000 đ' ;
+    dataPackage.AG90 := '5.000 đ' ;
+    dataPackage.AG100 := '10.000 đ' ;
+    dataPackage.GG135 := '5.000 đ' ;
+    dataPackage.GG155 := '35.000 đ' ;
 
     oldClipboard := A_Clipboard
     Send "^c"
@@ -356,59 +356,19 @@
     newClipboard := A_Clipboard
     key := Trim(newClipboard)
     A_Clipboard := oldClipboard
-    MsgBox loopkup(dataPackage, key)
+    result := loopkup(dataPackage, key)
+    if result != 'Key not found' {
+        MsgBox Format("Gói cước {1} có GHLH với {2}", key, result)
+    }
+    else {
+        MsgBox Format("Gói cước {1} không có GHLH", key)
+    }
 }
 
 ;* Tra cứu gói được CVTN
 ^+h:: {
     packages := [
-        "3MXH90", "6MXH90", "12MXH90",
-        "3MXH100", "6MXH100", "12MXH100",
-        "3MXH120", "6MXH120", "12MXH120",
-        "3MXH150", "6MXH150", "12MXH150",
-        "3MF159", "6MF159", "12MF159",
-        "3KC120", "6KC120", "12KC120",
-        "3KC150", "6KC150", "12KC150",
-        "3NA70", "6NA70", "12NA70",
-        "3NA90", "6NA90", "12NA90",
-        "3NA120", "6NA120", "12NA120",
-        "3S135", "6S135", "12S135",
-        "3S159", "6S159", "12S159",
-        "3MW90", "6MW90", "12MW90",
-        "3MWG110", "6MWG110", "12MWG110",
-        "3MWG125", "6MWG125", "12MWG125",
-        "3MWG135", "6MWG135", "12MWG135",
-        "3MWG155", "6MWG155", "12MWG155",
-        "3MGX90", "6MGX90", "12MGX90",
-        "3MGX110", "6MGX110", "12MGX110",
-        "3MGX125", "6MGX125", "12MGX125",
-        "3MAX90", "6MAX90", "12MAX90",
-        "3V90", "6V90", "12V90",
-        "3GX159", "6GX159", "12GX159",
-        "3GX139", "6GX139", "12GX139",
-        "MXH90", "MXH100", "MXH120", "MXH150",
-        "MF159",
-        "KC120", "KC150",
-        "NA70", "NA90", "NA120",
-        "S135", "S159",
-        "MW90",
-        "MWG110", "MWG125", "MWG135", "MWG155",
-        "MGX90", "MGX110", "MGX125",
-        "MAX90",
-        "V90",
-        "GX159", "GX139",
-        "C120K", "12C120K",
-        "MF219", "MF329",
-        "3MF219", "6MF219", "12MF219",
-        "3MF329", "6MF329", "12MF329",
-        "3E300", "6E300", "12E300",
-        "5GV", "5GC", "5GLQ",
-        "3E500", "6E1000", "12E1000",
-        "VZ100", "12VZ100",
-        "VZ135", "12VZ135",
-        "C90N", "3C90N", "6C90N", "12C90N",
-        "3TK135", "6TK135", "12TK135",
-        "TK135"
+        "3MXH90", "6MXH90", "12MXH90", "3MXH100", "6MXH100", "12MXH100", "3MXH120", "6MXH120", "12MXH120", "3MXH150", "6MXH150", "12MXH150", "3MF159", "6MF159", "12MF159", "3KC120", "6KC120", "12KC120", "3KC150", "6KC150", "12KC150", "3NA70", "6NA70", "12NA70", "3NA90", "6NA90", "12NA90", "3NA120", "6NA120", "12NA120", "3S135", "6S135", "12S135", "3S159", "6S159", "12S159", "3MW90", "6MW90", "12MW90", "3MWG110", "6MWG110", "12MWG110", "3MWG125", "6MWG125", "12MWG125", "3MWG135", "6MWG135", "12MWG135", "3MWG155", "6MWG155", "12MWG155", "3MGX90", "6MGX90", "12MGX90", "3MGX110", "6MGX110", "12MGX110", "3MGX125", "6MGX125", "12MGX125", "3MAX90", "6MAX90", "12MAX90", "3V90", "6V90", "12V90", "3GX159", "6GX159", "12GX159", "3GX139", "6GX139", "12GX139", "MXH90", "MXH100", "MXH120", "MXH150", "MF159", "KC120", "KC150", "NA70", "NA90", "NA120", "S135", "S159", "MW90", "MWG110", "MWG125", "MWG135", "MWG155", "MGX90", "MGX110", "MGX125", "MAX90", "V90", "GX159", "GX139", "C120K", "12C120K", "MF219", "MF329", "3MF219", "6MF219", "12MF219", "3MF329", "6MF329", "12MF329", "3E300", "6E300", "12E300", "5GV", "5GC", "5GLQ", "3E500", "6E1000", "12E1000", "VZ100", "12VZ100", "VZ135", "12VZ135", "C90N", "3C90N", "6C90N", "12C90N", "3TK135", "6TK135", "12TK135", "TK135"
     ]
     oldClipboard := A_Clipboard
     Send "^c"
@@ -417,14 +377,14 @@
     A_Clipboard := oldClipboard
     status := 0
     for index, package in packages {
-        if packages = packageClipboard {
-            MsgBox Format("Goi cuoc hien tai la {1} CO CVTN", package)
+        if package = packageClipboard {
+            MsgBox Format("Goi cuoc hien tai la {1} có CVTN", package)
             status := 1
             break
         }
     }
     if status = 0 {
-        MsgBox Format("Goi cuoc hien tai la {1} KHONG DUOC CVTN", package)
+        MsgBox Format("Goi cuoc hien tai la {1} KHONG DUOC CVTN", packageClipboard)
     }
 }
 
@@ -548,14 +508,38 @@ F4:: {
 
 F5:: {
     Send "^r"
-    Sleep 200
+    Sleep 150
     Send "{Enter}"
 }
 
-ConvertSecondToTime(second) {
-    hours := Floor(second / 3600)
-    minutes := Floor((second - (hours * 3600)) / 60)
-    return Format("{1} giờ {2} phút", hours, minutes)
+
+;* Chuyen doi giay sang gio, phut
+^+j:: {
+    oldClipboard := A_Clipboard
+    Send "^c"
+    Sleep 500
+    seconds := A_Clipboard
+    A_Clipboard := oldClipboard
+
+    hours := Floor(seconds / 3600)
+    minutes := Floor(Mod(seconds, 3600) / 60)
+    secs := Mod(seconds, 60)
+    MsgBox Format("{1} Giờ {2} Phút {3} Giây", hours, minutes, secs)
+}
+
+;* Chuyen doi KB sang MB, GB
+^+k:: {
+    oldClipboard := A_Clipboard
+    Send "^c"
+    Sleep 500
+    kb := A_Clipboard
+    A_Clipboard := oldClipboard
+
+    mb := Round(kb / 1024, 1)
+    gb := Round(kb / 1024 / 1024, 1)
+    result := Format("{1} MB, {2} GB", mb, gb)
+    A_Clipboard := result
+    MsgBox Format("Kích thước {1} KB tương đương với {2}", kb, result)
 }
 DateAdd_Custom(date, days) {
     return DateAdd(date, days, "days")
