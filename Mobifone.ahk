@@ -1,6 +1,6 @@
 ﻿#requires AutoHotkey v2.0
 #SingleInstance force
-global fileBlacklist := "blacklist.csv"
+
 ;*  Always on top
 ^+t:: { ; Alt + t
     Title_When_On_Top := "! "       ; change title "! " as required
@@ -88,85 +88,7 @@ global fileBlacklist := "blacklist.csv"
     MsgBox(FormatDate(DateAdd_Custom(date, days)))
     return
 }
-;* Thông tin gia hạn linh hoạt
-^+q:: {
-    ;Lấy giá hạn linh hoạt lần đầu tiên
-    oldClipboard := A_Clipboard
-    Send "^c"
-    Sleep 500
-    newClipboard := A_Clipboard
-    newClipboard := Trim(newClipboard)
-    ;tien xu ly gia tri
-    stringMoney := newClipboard
-    if InStr(newClipboard, ".") {
-        arr := StrSplit(newClipboard, ".")
-        stringMoney := Format("{1}{2}", arr[1], arr[2])
-    }
-    if InStr(newClipboard, ",") {
-        arr := StrSplit(newClipboard, ",")
-        stringMoney := Format("{1}{2}", arr[1], arr[2])
-    }
 
-    result := "Không hợp lệ"
-    IB := InputBox("Nhập giá gói cước", "Gia han linh hoat", "w150 h100")
-    editValue := StrLower(Trim(IB.Value))
-    if IB.Result != "Cancel" {
-        if editValue = "pt120"
-        {
-            price := 120000
-            priceOnDay := 4000
-            chiaLayNguyen := Floor(stringMoney / priceOnDay)
-            soTienChinh := chiaLayNguyen * priceOnDay
-            stringPT120 := Format("Gói PT120 - Tổng giá gói: {1}đ`n`nGia hạn lần đầu: {2}đ cho {3} ngày`n`nGia hạn lần sau: {4}đ cho {5} ngày`n`nGHLH Min: 10000đ", 120000, stringMoney, chiaLayNguyen, 120000 - stringMoney, 30 - chiaLayNguyen)
-            result := stringPT120
-        }
-        else if editValue = "kc90"
-            result := "GHLH KC90: 12.000đ"
-        else if editValue = "tk135"
-            result := "GHLH TK135: 4.500đ"
-        else if editValue = "c120"
-            result := "GHLH C120: 20.000đ"
-        else if editValue = "c90"
-            result := "GHLH C90: 12.000đ"
-        else if editValue = "kc120"
-            result := "GHLH KC120: 16.000đ"
-        else if editValue = "kc150"
-            result := "GHLH KC150: 25.000đ"
-        else if editValue = "pt70"
-            result := "GHLH PT70: 2.500đ"
-        else if editValue = "pt90"
-            result := "GHLH PT90: 3000đ"
-        else if editValue = "c120n"
-            result := "GHLH C120N: 16.000đ"
-        else if editValue = "c120k"
-            result := "GHLH C120K: 28.000đ"
-        else if editValue = "c120t"
-            result := "GHLH C120T: 28.000đ"
-        else if editValue = "tk159"
-            result := "GHLH TK159: 21.200đ"
-        else if editValue = "mxh80"
-            result := "GHLH MXH80: 6.000đ"
-        else if editValue = "mxh90"
-            result := "GHLH MXH90: 6.000đ"
-        else if editValue = "mxh100"
-            result := "GHLH MXH100: 7.000đ"
-        else if editValue = "mxh120"
-            result := "GHLH MXH120: 20.000đ"
-        else if editValue = "mxh150"
-            result := "GHLH MXH150: 30.000đ"
-        else {
-            priceOnDay := editValue / 30
-            firstDay := stringMoney / priceOnDay
-            secondDay := 30 - firstDay
-            secondMoney := editValue - stringMoney
-            result := Format("Tổng giá gói: {1}đ`n`nGia hạn lần đầu: {2}đ cho {3:0} ngày`n`nGia hạn lần sau: {4}đ cho {5:0} ngày", editValue, stringMoney, firstDay, secondMoney, secondDay)
-        }
-        MsgBox result
-    }
-
-    A_Clipboard := oldClipboard
-    return
-}
 ;* Date Calculator
 ^+e:: {
     oldClipboard := A_Clipboard
@@ -219,22 +141,7 @@ global fileBlacklist := "blacklist.csv"
     }
     MyGui.Show()
 }
-^+g:: {
-    packageName := "Package"
-    oldClipboard := A_Clipboard
-    Send "^c"
-    Sleep 100
 
-    if WinExist(packageName)
-        WinClose packageName
-    Sleep 100
-    ; run Package
-    filePath := Format("{1}\{2}", A_ScriptDir, packageName)
-    Run filePath
-    if WinWaitActive(packageName, , 3) {
-        A_Clipboard := oldClipboard
-    }
-}
 ^Escape:: {
     if WinActive("ahk_class Package") || WinActive("ahk_class" "WindowsForms10.Window.8.app.0.1ca0192_r10_ad1")
         WinClose
@@ -374,7 +281,7 @@ global fileBlacklist := "blacklist.csv"
         "9015", Map("Time", "chờ 24h", "Tài khoản", "TKC", "Kiểm tra nợ", "KT", "DK ứng tự động", "UDT/SUBS", "Hủy ứng tự động", "TCUTD", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "HU"),
         "9913", Map("Time", "", "Tài khoản", "TK_AP1: - Thoại/SMS nội mạng, liên mạng.", "Kiểm tra nợ", "", "DK ứng tự động", "TD", "Hủy ứng tự động", "HUY TD", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "UACHU"),
         "9928", Map("Time", "", "Tài khoản", "Phút gọi", "Kiểm tra nợ", "TT", "DK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "HT", "Mã hoàn ứng", "MBHU"),
-        "988", Map("Time", "", "Tài khoản", "KM3: Thoại/SMS nội mạng, liên mạng / DT20", "Kiểm tra nợ", "KT", "DK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "MBFHU"),
+        "9363", Map("Time", "", "Tài khoản", "KM3: Thoại/SMS nội mạng, liên mạng / DT20", "Kiểm tra nợ", "KT", "DK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "MBFHU"),
         "9070", Map("Time", "24h", "Tài khoản", "Data", "Kiểm tra nợ", "KT", "DK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "TT", "Mã hoàn ứng", "DT247HU"),
         "1256", Map("Time", "7 ngày", "Tài khoản", "Data", "Kiểm tra nợ", "KT", "DK ứng tự động", "UDT", "Hủy ứng tự động", "HUY", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "EHU"),
         "1255", Map("Time", "", "Tài khoản", "TK_AP2: Thoại/SMS nội mạng, liên mạng.", "Kiểm tra nợ", "", "DK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "UAGHU"),
@@ -387,6 +294,138 @@ global fileBlacklist := "blacklist.csv"
     value := Trim(newClipboard)
     A_Clipboard := oldClipboard
     MsgBox GetInfoByCodeOrCompletionCode(codes, value)
+}
+
+;* Gia hạn linh hoạt
+^+g:: {
+    dataPackage := {}
+    dataPackage.KC90 := 'Gói KC90 GHLH 12.000 đ' ;
+    dataPackage.TK135 := 'Gói TK135 GHLH 4.500 đ' ;
+    dataPackage.C120 := 'Gói C120 GHLH 20.000 đ' ;
+    dataPackage.C90 := 'Gói C90 GHLH 12.000 đ' ;
+    dataPackage.C90N := 'Gói C90N GHLH 12.000 đ' ;
+    dataPackage.KC120 := 'Gói KC120 GHLH 16.000 đ' ;
+    dataPackage.KC150 := 'Gói KC150 GHLH 25.000 đ' ;
+    dataPackage.PT120 := 'Gói PT120 GHLH 10.000 đ' ;
+    dataPackage.PT70 := 'Gói PT70 GHLH 2.500 đ' ;
+    dataPackage.PT90 := 'Gói PT90 GHLH 3.000 đ' ;
+    dataPackage.C120N := 'Gói C120N GHLH 16.000 đ' ;
+    dataPackage.C120K := 'Gói C120K GHLH 28.000 đ' ;
+    dataPackage.C120T := 'Gói C120T GHLH 28.000 đ' ;
+    dataPackage.TK159 := 'Gói TK159 GHLH 21.200 đ' ;
+    dataPackage.TK219 := 'Gói TK219 GHLH 29.200 đ' ;
+    dataPackage.MXH80 := 'Gói MXH80 GHLH 6.000 đ' ;
+    dataPackage.MXH90 := 'Gói MXH90 GHLH 6.000 đ' ;
+    dataPackage.MXH100 := 'Gói MXH100 GHLH 7.000 đ' ;
+    dataPackage.MXH120 := 'Gói MXH120 GHLH 20.000 đ' ;
+    dataPackage.MXH150 := 'Gói MXH150 GHLH 30.000 đ' ;
+    dataPackage.C50N := 'Gói C50N GHLH 40.000 đ' ;
+    dataPackage.FD60 := 'Gói FD60 GHLH 2.000 đ' ;
+    dataPackage.21G := 'Gói 21G GHLH 4.000 đ' ;
+    dataPackage.24G := 'Gói 24G GHLH 6.600 đ' ;
+    dataPackage.12C120 := 'Gói 12C120 GHLH 120.000 đ' ;
+    dataPackage.12C90N := 'Gói 12C90N GHLH 90.000 đ' ;
+    dataPackage.12C50N := 'Gói 12C50N GHLH 50.000 đ' ;
+    dataPackage.12KC150 := 'Gói 12KC150 GHLH 150.000 đ' ;
+    dataPackage.12KC120 := 'Gói 12KC120 GHLH 120.000 đ' ;
+    dataPackage.12KC90 := 'Gói 12KC90 GHLH 90.000 đ' ;
+    dataPackage.12PT120 := 'Gói 12PT120 GHLH 120.000 đ' ;
+    dataPackage.12PT90 := 'Gói 12PT90 GHLH 90.000 đ' ;
+    dataPackage.12PT70 := 'Gói 12PT70 GHLH 70.000 đ' ;
+    dataPackage.12MXH150 := 'Gói 12MXH150 GHLH 150.000 đ' ;
+    dataPackage.12MXH120 := 'Gói 12MXH120 GHLH 120.000 đ' ;
+    dataPackage.12MXH100 := 'Gói 12MXH100 GHLH 100.000 đ' ;
+    dataPackage.12MXH90 := 'Gói 12MXH90 GHLH 90.000 đ' ;
+    dataPackage.12MXH80 := 'Gói 12MXH80 GHLH 80.000 đ' ;
+    dataPackage.12TK219 := 'Gói 12TK219 GHLH 219.000 đ' ;
+    dataPackage.12TK159 := 'Gói 12TK159 GHLH 159.000 đ' ;
+    dataPackage.12TK135 := 'Gói 12TK135 GHLH 135.000 đ' ;
+    dataPackage.NA70 := 'Gói NA70 GHLH 70.000 đ' ;
+    dataPackage.NA90 := 'Gói NA90 GHLH 90.000 đ' ;
+    dataPackage.NA120 := 'Gói NA120 GHLH 120.000 đ' ;
+    dataPackage.MBF30 := 'Gói MBF30 GHLH 10.000 đ' ;
+    dataPackage.EDU100 := 'Gói EDU100 GHLH 10.000 đ' ;
+    dataPackage.AG90 := 'Gói AG90 GHLH 5.000 đ' ;
+    dataPackage.AG100 := 'Gói AG100 GHLH 10.000 đ' ;
+    dataPackage.GG135 := 'Gói GG135 GHLH 5.000 đ' ;
+    dataPackage.GG155 := 'Gói GG155 GHLH 35.000 đ' ;
+
+    oldClipboard := A_Clipboard
+    Send "^c"
+    Sleep 500
+    newClipboard := A_Clipboard
+    key := Trim(newClipboard)
+    A_Clipboard := oldClipboard
+    MsgBox loopkup(dataPackage, key)
+}
+
+;* Tra cứu gói được CVTN
+^+h:: {
+    packages := [
+        "3MXH90", "6MXH90", "12MXH90",
+        "3MXH100", "6MXH100", "12MXH100",
+        "3MXH120", "6MXH120", "12MXH120",
+        "3MXH150", "6MXH150", "12MXH150",
+        "3MF159", "6MF159", "12MF159",
+        "3KC120", "6KC120", "12KC120",
+        "3KC150", "6KC150", "12KC150",
+        "3NA70", "6NA70", "12NA70",
+        "3NA90", "6NA90", "12NA90",
+        "3NA120", "6NA120", "12NA120",
+        "3S135", "6S135", "12S135",
+        "3S159", "6S159", "12S159",
+        "3MW90", "6MW90", "12MW90",
+        "3MWG110", "6MWG110", "12MWG110",
+        "3MWG125", "6MWG125", "12MWG125",
+        "3MWG135", "6MWG135", "12MWG135",
+        "3MWG155", "6MWG155", "12MWG155",
+        "3MGX90", "6MGX90", "12MGX90",
+        "3MGX110", "6MGX110", "12MGX110",
+        "3MGX125", "6MGX125", "12MGX125",
+        "3MAX90", "6MAX90", "12MAX90",
+        "3V90", "6V90", "12V90",
+        "3GX159", "6GX159", "12GX159",
+        "3GX139", "6GX139", "12GX139",
+        "MXH90", "MXH100", "MXH120", "MXH150",
+        "MF159",
+        "KC120", "KC150",
+        "NA70", "NA90", "NA120",
+        "S135", "S159",
+        "MW90",
+        "MWG110", "MWG125", "MWG135", "MWG155",
+        "MGX90", "MGX110", "MGX125",
+        "MAX90",
+        "V90",
+        "GX159", "GX139",
+        "C120K", "12C120K",
+        "MF219", "MF329",
+        "3MF219", "6MF219", "12MF219",
+        "3MF329", "6MF329", "12MF329",
+        "3E300", "6E300", "12E300",
+        "5GV", "5GC", "5GLQ",
+        "3E500", "6E1000", "12E1000",
+        "VZ100", "12VZ100",
+        "VZ135", "12VZ135",
+        "C90N", "3C90N", "6C90N", "12C90N",
+        "3TK135", "6TK135", "12TK135",
+        "TK135"
+    ]
+    oldClipboard := A_Clipboard
+    Send "^c"
+    Sleep 200
+    packageClipboard := Trim(A_Clipboard)
+    A_Clipboard := oldClipboard
+    status := 0
+    for index, package in packages {
+        if packages = packageClipboard {
+            MsgBox Format("Goi cuoc hien tai la {1} CO CVTN", package)
+            status := 1
+            break
+        }
+    }
+    if status = 0 {
+        MsgBox Format("Goi cuoc hien tai la {1} KHONG DUOC CVTN", package)
+    }
 }
 
 ^+l:: {
@@ -483,6 +522,8 @@ global fileBlacklist := "blacklist.csv"
     dataLS.ACTI := 'Mở 2 chiều do nạp tiền / Kích hoạt số trả trước mới' ;
     dataLS.RES := 'Chặn 1 chiều do hết tiền (nhưng còn ngày sử dụng)' ;
     dataLS.CA7 := 'Hủy sim 2 số, thanh lý 1 số' ;
+    dataLS.CKCVB := 'Chặn không chính chủ vùng biên, DTV xác minh ghi nhận code 19.19. Không xác minh được thì mời đến CHC' ;
+    dataLS.SVBG := 'Spamcall-SVBG: ĐTV mời KH ra cửa hàng xác thực thông tin và làm cam kết để mở lại'
 
     oldClipboard := A_Clipboard
     Send "^c"
