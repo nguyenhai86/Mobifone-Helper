@@ -1,4 +1,4 @@
-#TUYÊN BỐ TỪ CHỐI TRÁCH NHIỆM
+# TUYÊN BỐ TỪ CHỐI TRÁCH NHIỆM
 Công cụ này được phát triển nhằm hỗ trợ tra cứu/tham khảo thông tin. Dữ liệu trong công cụ có thể chưa đầy đủ hoặc chưa được cập nhật kịp thời. Tôi sẽ cập nhật dữ liệu khi có thời gian. Người dùng vui lòng kiểm tra lại thông tin từ nguồn chính thức nếu cần độ chính xác cao. Tôi không chịu trách nhiệm đối với bất kỳ sai sót hoặc thiệt hại nào phát sinh từ việc sử dụng công cụ này.
 # Hướng dẫn sử dụng
 Ctrl + shift + T: Always on top
