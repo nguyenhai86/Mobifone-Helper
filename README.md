@@ -7,6 +7,7 @@ Ctrl + shift + T: Always on top
 2. Ctrl + shift + 3: Tính 30 ngày tới
 3. Ctrl + shift + 4: Tính 45 ngày tới
 4. Ctrl + shift + 6: Tính 60 ngày tới
+5. Ctrl + Shift + E: Tính ngày hết hạn sử dụng của gói dài kỳ ( Chu kỳ 30 ngày, 31 ngày ). Bản chất là cộng ngày
 --> Trường hợp không được chọn ngày thì sẽ tính từ ngày hiện tại
 ## Tra cứu mã / gói
 1. Ctrl + shift + Y: Tra cứu profile đăng ký được DT20
