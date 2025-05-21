@@ -11,9 +11,10 @@ Ctrl + shift + T: Always on top
 ## Tra cứu mã / gói
 1. Ctrl + shift + Y: Tra cứu profile đăng ký được DT20
 2. Ctrl + shift + S: Tra cứu nhà mạng ( Bỏ số 0 ở đầu )
-3. Ctrl + shift + G: Tra cứu gói được GHLH
-4. Ctrl + shift + H: Tra cứu gói được CVTN
+3. Ctrl + shift + G: Tra cứu gói được gia hạn linh hoạt ( Kể cả đơn kỳ và dài kỳ )
+4. Ctrl + shift + H: Tra cứu gói được chuyển vùng trong nước
 5. Ctrl + shift + L: Tra cứu mã lịch sử dịch vụ
+6. Ctrl + shift + U: Tra cứu tổng đài ứng tiền ( Theo mã hoàn ứng, mã ứng, số tổng đài )
 
 ## Công cụ chuyển đổi đơn vị
 7. Ctrl + shift + J: Chuyển từ giây sang dạng " Giờ phút giây"
