@@ -144,6 +144,11 @@
     else
         MyGui.Add("Text", "x130 y20 cRed", "Không thể đăng ký gói DT20")
     MyGui.Add("Text", "xm", stringLine)
+
+    MyGui.OnEvent("Escape", MyGui_Escape)
+    MyGui_Escape(thisGui) {
+        WinClose titleGUI
+    }
     MyGui.Show()
 }
 
@@ -334,6 +339,12 @@
     Send "^c"
     Sleep 200
     packageClipboard := Trim(A_Clipboard)
+    ; Hàm kiểm tra chuỗi chỉ chứa chữ cái và chữ số
+    if !RegExMatch(packageClipboard, "^[a-zA-Z0-9]+$") {
+        MsgBox Format("Gói cước '{1}' không hợp lệ", packageClipboard)
+        A_Clipboard := oldClipboard
+        return
+    }
     A_Clipboard := oldClipboard
 
     resultCVTN := 0
@@ -350,7 +361,7 @@
     titleGUI := "Check CVTN and GHLH"
     MyGui := Gui(, titleGUI)
     stringLine := "-------------------------------------------------------------------------"
-    MyGui.Add("Text", "x10 y20 cRed", Format("Gói cước hiện tại là: {1}", packageClipboard))
+    MyGui.Add("Text", "x10 y20 cRed", Format("Gói cước hiện tại là: '{1}'", packageClipboard))
     MyGui.Add("Text", "xm", stringLine)
     MyGui.Add("Text", "x10 y60 cBlue", "CVTN:")
     MyGui.Add("Text", "xm", stringLine)
@@ -366,6 +377,10 @@
         MyGui.Add("Text", "x100 y100 cBlack", resultGHLH)
     else
         MyGui.Add("Text", "x100 y100 cBlack", resultCVTN)
+    MyGui.OnEvent("Escape", MyGui_Escape)
+    MyGui_Escape(thisGui) {
+        WinClose titleGUI
+    }
     MyGui.Show()
 }
 
@@ -500,6 +515,7 @@ F5:: {
     Send "^c"
     Sleep 500
     seconds := A_Clipboard
+    seconds := Trim(seconds)
     A_Clipboard := oldClipboard
 
     hours := Floor(seconds / 3600)
@@ -514,10 +530,11 @@ F5:: {
     Send "^c"
     Sleep 500
     kb := A_Clipboard
+    kb := Trim(kb)
     A_Clipboard := oldClipboard
 
-    mb := Round(kb / 1024, 1)
-    gb := Round(kb / 1024 / 1024, 1)
+    mb := Round(kb / 1024, 2)
+    gb := Round(kb / 1024 / 1024, 2)
     result := Format("{1} MB, {2} GB", mb, gb)
     A_Clipboard := result
     MsgBox Format("Kích thước {1} KB tương đương với {2}", kb, result)
