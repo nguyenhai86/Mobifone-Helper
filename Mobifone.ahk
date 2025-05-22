@@ -47,7 +47,7 @@
     MyGui.Add("Text", "x10 y270 cBlue", "")
 
     MyGui.Add("Text", "x120 y20 cRed", "Ngày tính")
-    MyGui.Add("Text", "x120 y60", FormatDate(DateAdd_Custom(date, 5)))
+    MyGui.Add("Text", "x120 y60", FormatDate(DateAdd_Custom(date, 4)))
     MyGui.Add("Text", "x120 y100", FormatDate(DateAdd_Custom(date, 10)))
     MyGui.Add("Text", "x120 y140", FormatDate(DateAdd_Custom(date, 14)))
     MyGui.Add("Text", "x120 y180", FormatDate(DateAdd_Custom(date, 30)))
