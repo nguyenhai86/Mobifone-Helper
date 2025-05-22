@@ -16,80 +16,51 @@
     }
 }
 
-;* Cộng 10 ngày theo Clipboard
-^+1:: {
-    days := 10
-    oldClipboard := A_Clipboard
-    Send "^c"
-    Sleep 500
-    dateString := Trim(A_Clipboard)
-    A_Clipboard := oldClipboard
-    date := DateParse(dateString)
-    date := 0
-    try {
-        date := DateParse(dateString)
-    } catch Error as e {
-        date := A_Now
-    }
-    MsgBox(FormatDate(DateAdd_Custom(date, days)))
-    return
-}
-;* Cộng 30 ngày theo Clipboard
-^+3:: {
-    days := 30
-    oldClipboard := A_Clipboard
-    Send "^c"
-    Sleep 500
-    dateString := Trim(A_Clipboard)
-    A_Clipboard := oldClipboard
-    date := 0
-    try {
-        date := DateParse(dateString)
-    } catch Error as e {
-        date := A_Now
-    }
-    A_Clipboard := oldClipboard
-    MsgBox(FormatDate(DateAdd_Custom(date, days)))
-    return
-}
-;* Cộng 45 ngày theo Clipboard
-^+4:: {
-    days := 45
-    oldClipboard := A_Clipboard
-    Send "^c"
-    Sleep 500
-    dateString := Trim(A_Clipboard)
-    A_Clipboard := oldClipboard
-    date := 0
-    try {
-        date := DateParse(dateString)
-    } catch Error as e {
-        date := A_Now
-    }
-    A_Clipboard := oldClipboard
-    MsgBox(FormatDate(DateAdd_Custom(date, days)))
-    return
-}
-;* Cộng 60 ngày theo Clipboard
-^+6:: {
-    days := 60
-    oldClipboard := A_Clipboard
-    Send "^c"
-    Sleep 500
-    dateString := Trim(A_Clipboard)
-    A_Clipboard := oldClipboard
-    date := 0
-    try {
-        date := DateParse(dateString)
-    } catch Error as e {
-        date := A_Now
-    }
-    A_Clipboard := oldClipboard
-    MsgBox(FormatDate(DateAdd_Custom(date, days)))
-    return
-}
-
 ;* Date Calculator
+^+q:: {
+    oldClipboard := A_Clipboard
+    Send "^c"
+    Sleep 500
+    dateString := Trim(A_Clipboard)
+    date := 0
+    try {
+        date := DateParse(dateString)
+    } catch Error as e {
+        date := A_Now
+    }
+    titleGUI := "Date Calculator"
+    MyGui := Gui(, titleGUI)
+    stringLine := "-------------------------------------------------------------------------"
+    MyGui.Add("Text", "x10 y20 cRed", "Ngày hiện tại")
+    MyGui.Add("Text", "xm", stringLine)
+    MyGui.Add("Text", "x10 y60 cBlue", "+ 04 ngày:")
+    MyGui.Add("Text", "xm", stringLine)
+    MyGui.Add("Text", "x10 y100 cBlue", "+ 10 ngày:")
+    MyGui.Add("Text", "xm", stringLine)
+    MyGui.Add("Text", "x10 y140 cBlue", "+ 14 ngày:")
+    MyGui.Add("Text", "xm", stringLine)
+    MyGui.Add("Text", "x10 y180 cBlue", "+ 30 ngày:")
+    MyGui.Add("Text", "xm", stringLine)
+    MyGui.Add("Text", "x10 y220 cBlue", "+ 45 ngày:")
+    MyGui.Add("Text", "xm", stringLine)
+    MyGui.Add("Text", "x10 y260 cBlue", "+ 60 ngày:")
+    MyGui.Add("Text", "x10 y270 cBlue", "")
+
+    MyGui.Add("Text", "x120 y20 cRed", "Ngày tính")
+    MyGui.Add("Text", "x120 y60", FormatDate(DateAdd_Custom(date, 5)))
+    MyGui.Add("Text", "x120 y100", FormatDate(DateAdd_Custom(date, 10)))
+    MyGui.Add("Text", "x120 y140", FormatDate(DateAdd_Custom(date, 14)))
+    MyGui.Add("Text", "x120 y180", FormatDate(DateAdd_Custom(date, 30)))
+    MyGui.Add("Text", "x120 y220", FormatDate(DateAdd_Custom(date, 45)))
+    MyGui.Add("Text", "x120 y260", FormatDate(DateAdd_Custom(date, 60)))
+
+    A_Clipboard := oldClipboard
+    MyGui.OnEvent("Escape", MyGui_Escape)
+    MyGui_Escape(thisGui) {
+        WinClose titleGUI
+    }
+    MyGui.Show()
+}
 ^+e:: {
     oldClipboard := A_Clipboard
     Send "^c"
@@ -156,17 +127,24 @@
     Sleep 200
     profileClipboard := Trim(A_Clipboard)
     A_Clipboard := oldClipboard
-    status := 0
+    result := 0
     for index, profile in profiles {
         if profile = profileClipboard {
-            MsgBox Format("Profile hien tai la {1} co the dang ky goi DT20", profile)
-            status := 1
+            result := 1
             break
         }
     }
-    if status = 0 {
-        MsgBox Format("Profile hien tai la {1} khong dang ky duoc DT20", profileClipboard)
-    }
+
+    titleGUI := "Check DT20"
+    MyGui := Gui(, titleGUI)
+    stringLine := "-------------------------------------------------------------------------"
+    MyGui.Add("Text", "x10 y20 cBlack", Format("Profile Hiện tại là {1}", profileClipboard))
+    if result = 1
+        MyGui.Add("Text", "x130 y20 cBlue", "có thể đăng ký gói DT20")
+    else
+        MyGui.Add("Text", "x130 y20 cRed", "Không thể đăng ký gói DT20")
+    MyGui.Add("Text", "xm", stringLine)
+    MyGui.Show()
 }
 
 ;* Tra cuu so dien thoai tong dai
@@ -187,14 +165,11 @@
     newClipboard := A_Clipboard
     phoneNumber := Trim(newClipboard)
     A_Clipboard := oldClipboard
-
-    status := 0
-    prefix := "0"
-    If SubStr(phoneNumber, 1, 1) = "0"
-        prefix := SubStr(phoneNumber, 2, 3)
-    else
-        prefix := SubStr(phoneNumber, 1, 2)
+    ;remove number 0 at the beginning none 84
+    phoneNumber := RegExReplace(phoneNumber, "^0", "")
+    prefix := SubStr(phoneNumber, 1, 2)
     result := ""
+    status := 0
     ; Viettel
     if status = 0 {
         for index, value in Viettel {
@@ -278,12 +253,12 @@
 ;* Tong dai ung tien
 ^+u:: {
     codes := Map(
-        "9015", Map("Time", "chờ 24h", "Tài khoản", "TKC", "Kiểm tra nợ", "KT", "DK ứng tự động", "UDT/SUBS", "Hủy ứng tự động", "TCUTD", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "HU"),
+        "9015", Map("Time", "chờ 24h", "Tài khoản", "TKC", "Kiểm tra nợ", "KT", "DK ứng tự động", "UDT/SUBS", "Hủy ứng tự động", "HUY UTD", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "HU"),
         "9913", Map("Time", "", "Tài khoản", "TK_AP1: - Thoại/SMS nội mạng, liên mạng.", "Kiểm tra nợ", "", "DK ứng tự động", "TD", "Hủy ứng tự động", "HUY TD", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "UACHU"),
         "9928", Map("Time", "", "Tài khoản", "Phút gọi", "Kiểm tra nợ", "TT", "DK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "HT", "Mã hoàn ứng", "MBHU"),
         "9363", Map("Time", "", "Tài khoản", "KM3: Thoại/SMS nội mạng, liên mạng / DT20", "Kiểm tra nợ", "KT", "DK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "MBFHU"),
         "9070", Map("Time", "24h", "Tài khoản", "Data", "Kiểm tra nợ", "KT", "DK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "TT", "Mã hoàn ứng", "DT247HU"),
-        "1256", Map("Time", "7 ngày", "Tài khoản", "Data", "Kiểm tra nợ", "KT", "DK ứng tự động", "UDT", "Hủy ứng tự động", "HUY", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "EHU"),
+        "1256", Map("Time", "7 ngày", "Tài khoản", "TKC", "Kiểm tra nợ", "KT", "DK ứng tự động", "UDT", "Hủy ứng tự động", "HUY", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "EHU"),
         "1255", Map("Time", "", "Tài khoản", "TK_AP2: Thoại/SMS nội mạng, liên mạng.", "Kiểm tra nợ", "", "DK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "UAGHU"),
         "5110", Map("Time", "", "Tài khoản", "Phút gọi", "Kiểm tra nợ", "KT", "DK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "HT", "Mã hoàn ứng", "SPHU")
     )
@@ -296,96 +271,102 @@
     MsgBox GetInfoByCodeOrCompletionCode(codes, value)
 }
 
-;* Gia hạn linh hoạt
+;* Tra cứu gói được CVTN và GHLH
 ^+g:: {
-    dataPackage := {}
-    dataPackage.KC90 := '12.000 đ' ;
-    dataPackage.TK135 := '4.500 đ' ;
-    dataPackage.C120 := '20.000 đ' ;
-    dataPackage.C90 := '12.000 đ' ;
-    dataPackage.C90N := '12.000 đ' ;
-    dataPackage.KC120 := '16.000 đ' ;
-    dataPackage.KC150 := '25.000 đ' ;
-    dataPackage.PT120 := '10.000 đ' ;
-    dataPackage.PT70 := '2.500 đ' ;
-    dataPackage.PT90 := '3.000 đ' ;
-    dataPackage.C120N := '16.000 đ' ;
-    dataPackage.C120K := '28.000 đ' ;
-    dataPackage.C120T := '28.000 đ' ;
-    dataPackage.TK159 := '21.200 đ' ;
-    dataPackage.TK219 := '29.200 đ' ;
-    dataPackage.MXH80 := '6.000 đ' ;
-    dataPackage.MXH90 := '6.000 đ' ;
-    dataPackage.MXH100 := '7.000 đ' ;
-    dataPackage.MXH120 := '20.000 đ' ;
-    dataPackage.MXH150 := '30.000 đ' ;
-    dataPackage.C50N := '40.000 đ' ;
-    dataPackage.FD60 := '2.000 đ' ;
-    dataPackage.21G := '4.000 đ' ;   // Không thể bắt đầu bằng số, nên giữ tạm _21G hoặc đổi tên khác
-    dataPackage.24G := '6.600 đ' ;   // Giống trên
-    dataPackage.12C120 := '120.000 đ' ;  // Bắt đầu số, lỗi ngữ pháp
-    dataPackage.12C90N := '90.000 đ' ;
-    dataPackage.12C50N := '50.000 đ' ;
-    dataPackage.12KC150 := '150.000 đ' ;
-    dataPackage.12KC120 := '120.000 đ' ;
-    dataPackage.12KC90 := '90.000 đ' ;
-    dataPackage.12PT120 := '120.000 đ' ;
-    dataPackage.12PT90 := '90.000 đ' ;
-    dataPackage.12PT70 := '70.000 đ' ;
-    dataPackage.12MXH150 := '150.000 đ' ;
-    dataPackage.12MXH120 := '120.000 đ' ;
-    dataPackage.12MXH100 := '100.000 đ' ;
-    dataPackage.12MXH90 := '90.000 đ' ;
-    dataPackage.12MXH80 := '80.000 đ' ;
-    dataPackage.12TK219 := '219.000 đ' ;
-    dataPackage.12TK159 := '159.000 đ' ;
-    dataPackage.12TK135 := '135.000 đ' ;
-    dataPackage.NA70 := '70.000 đ' ;
-    dataPackage.NA90 := '90.000 đ' ;
-    dataPackage.NA120 := '120.000 đ' ;
-    dataPackage.MBF30 := '10.000 đ' ;
-    dataPackage.EDU100 := '10.000 đ' ;
-    dataPackage.AG90 := '5.000 đ' ;
-    dataPackage.AG100 := '10.000 đ' ;
-    dataPackage.GG135 := '5.000 đ' ;
-    dataPackage.GG155 := '35.000 đ' ;
-
-    oldClipboard := A_Clipboard
-    Send "^c"
-    Sleep 500
-    newClipboard := A_Clipboard
-    key := Trim(newClipboard)
-    A_Clipboard := oldClipboard
-    result := loopkup(dataPackage, key)
-    if result != 'Key not found' {
-        MsgBox Format("Gói cước {1} có GHLH với {2}", key, result)
-    }
-    else {
-        MsgBox Format("Gói cước {1} không có GHLH", key)
-    }
-}
-
-;* Tra cứu gói được CVTN
-^+h:: {
-    packages := [
-        "3MXH90", "6MXH90", "12MXH90", "3MXH100", "6MXH100", "12MXH100", "3MXH120", "6MXH120", "12MXH120", "3MXH150", "6MXH150", "12MXH150", "3MF159", "6MF159", "12MF159", "3KC120", "6KC120", "12KC120", "3KC150", "6KC150", "12KC150", "3NA70", "6NA70", "12NA70", "3NA90", "6NA90", "12NA90", "3NA120", "6NA120", "12NA120", "3S135", "6S135", "12S135", "3S159", "6S159", "12S159", "3MW90", "6MW90", "12MW90", "3MWG110", "6MWG110", "12MWG110", "3MWG125", "6MWG125", "12MWG125", "3MWG135", "6MWG135", "12MWG135", "3MWG155", "6MWG155", "12MWG155", "3MGX90", "6MGX90", "12MGX90", "3MGX110", "6MGX110", "12MGX110", "3MGX125", "6MGX125", "12MGX125", "3MAX90", "6MAX90", "12MAX90", "3V90", "6V90", "12V90", "3GX159", "6GX159", "12GX159", "3GX139", "6GX139", "12GX139", "MXH90", "MXH100", "MXH120", "MXH150", "MF159", "KC120", "KC150", "NA70", "NA90", "NA120", "S135", "S159", "MW90", "MWG110", "MWG125", "MWG135", "MWG155", "MGX90", "MGX110", "MGX125", "MAX90", "V90", "GX159", "GX139", "C120K", "12C120K", "MF219", "MF329", "3MF219", "6MF219", "12MF219", "3MF329", "6MF329", "12MF329", "3E300", "6E300", "12E300", "5GV", "5GC", "5GLQ", "3E500", "6E1000", "12E1000", "VZ100", "12VZ100", "VZ135", "12VZ135", "C90N", "3C90N", "6C90N", "12C90N", "3TK135", "6TK135", "12TK135", "TK135"
+    packagesCVTN := [
+        "3MXH90", "6MXH90", "12MXH90", "3MXH100", "6MXH100", "12MXH100", "3MXH120", "6MXH120", "12MXH120", "3MXH150", "6MXH150", "12MXH150", "3MF159", "6MF159", "12MF159", "3KC120", "6KC120", "12KC120", "3KC150", "6KC150", "12KC150", "3NA70", "6NA70", "12NA70", "3NA90", "6NA90", "12NA90", "3NA120", "6NA120", "12NA120", "3S135", "6S135", "12S135", "3S159", "6S159", "12S159", "3MW90", "6MW90", "12MW90", "3MWG110", "6MWG110", "12MWG110", "3MWG125", "6MWG125", "12MWG125", "3MWG135", "6MWG135", "12MWG135", "3MWG155", "6MWG155", "12MWG155", "3MGX90", "6MGX90", "12MGX90", "3MGX110", "6MGX110", "12MGX110", "3MGX125", "6MGX125", "12MGX125", "3MAX90", "6MAX90", "12MAX90", "3V90", "6V90", "12V90", "3GX159", "6GX159", "12GX159", "3GX139", "6GX139", "12GX139", "MXH90", "MXH100", "MXH120", "MXH150", "MF159", "KC120", "KC150", "NA70", "NA90", "NA120", "S135", "S159", "MW90", "MWG110", "MWG125", "MWG135", "MWG155", "MGX90", "MGX110", "MGX125", "MAX90", "V90", "GX159", "GX139", "C120K", "12C120K", "MF219", "MF329", "3MF219", "6MF219", "12MF219", "3MF329", "6MF329", "12MF329", "3E300", "6E300", "12E300", "5GV", "5GC", "5GLQ", "3E500", "6E1000", "12E1000", "VZ100", "12VZ100", "VZ135", "12VZ135", "C90N", "3C90N", "6C90N", "12C90N", "3TK135", "6TK135", "12TK135", "TK135", 'KC90', '3KC90', '6KC90', '12KC90', '3TK159', '6TK159', '12TK159', 'TK159', '3PT90', '6PT90', '12PT90', 'PT90'
     ]
+
+    packagesGHLH := {}
+    packagesGHLH.KC90 := '12.000 đ' ;
+    packagesGHLH.TK135 := '4.500 đ' ;
+    packagesGHLH.C120 := '20.000 đ' ;
+    packagesGHLH.C90 := '12.000 đ' ;
+    packagesGHLH.C90N := '12.000 đ' ;
+    packagesGHLH.KC120 := '16.000 đ' ;
+    packagesGHLH.KC150 := '25.000 đ' ;
+    packagesGHLH.PT120 := '10.000 đ' ;
+    packagesGHLH.PT70 := '2.500 đ' ;
+    packagesGHLH.PT90 := '3.000 đ' ;
+    packagesGHLH.C120N := '16.000 đ' ;
+    packagesGHLH.C120K := '28.000 đ' ;
+    packagesGHLH.C120T := '28.000 đ' ;
+    packagesGHLH.TK159 := '21.200 đ' ;
+    packagesGHLH.TK219 := '29.200 đ' ;
+    packagesGHLH.MXH80 := '6.000 đ' ;
+    packagesGHLH.MXH90 := '6.000 đ' ;
+    packagesGHLH.MXH100 := '7.000 đ' ;
+    packagesGHLH.MXH120 := '20.000 đ' ;
+    packagesGHLH.MXH150 := '30.000 đ' ;
+    packagesGHLH.C50N := '40.000 đ' ;
+    packagesGHLH.FD60 := '2.000 đ' ;
+    packagesGHLH.21G := '4.000 đ'
+    packagesGHLH.24G := '6.600 đ'
+    packagesGHLH.12C120 := '120.000 đ'
+    packagesGHLH.12C90N := '90.000 đ' ;
+    packagesGHLH.12C50N := '50.000 đ' ;
+    packagesGHLH.12KC150 := '150.000 đ' ;
+    packagesGHLH.12KC120 := '120.000 đ' ;
+    packagesGHLH.12KC90 := '90.000 đ' ;
+    packagesGHLH.12PT120 := '120.000 đ' ;
+    packagesGHLH.12PT90 := '90.000 đ' ;
+    packagesGHLH.12PT70 := '70.000 đ' ;
+    packagesGHLH.12MXH150 := '150.000 đ' ;
+    packagesGHLH.12MXH120 := '120.000 đ' ;
+    packagesGHLH.12MXH100 := '100.000 đ' ;
+    packagesGHLH.12MXH90 := '90.000 đ' ;
+    packagesGHLH.12MXH80 := '80.000 đ' ;
+    packagesGHLH.12TK219 := '219.000 đ' ;
+    packagesGHLH.12TK159 := '159.000 đ' ;
+    packagesGHLH.12TK135 := '135.000 đ' ;
+    packagesGHLH.NA70 := '7.000 đ' ;
+    packagesGHLH.NA90 := '6.000 đ' ;
+    packagesGHLH.NA120 := '6.000 đ' ;
+    packagesGHLH.MBF30 := '10.000 đ' ;
+    packagesGHLH.EDU100 := '10.000 đ' ;
+    packagesGHLH.ME100 := '10.000 đ' ;
+    packagesGHLH.AG90 := '5.000 đ' ;
+    packagesGHLH.AG100 := '10.000 đ' ;
+    packagesGHLH.GG135 := '5.000 đ' ;
+    packagesGHLH.GG155 := '35.000 đ' ;
+
     oldClipboard := A_Clipboard
     Send "^c"
     Sleep 200
     packageClipboard := Trim(A_Clipboard)
     A_Clipboard := oldClipboard
-    status := 0
-    for index, package in packages {
+
+    resultCVTN := 0
+    resultGHLH := 0
+
+    for index, package in packagesCVTN {
         if package = packageClipboard {
-            MsgBox Format("Goi cuoc hien tai la {1} có CVTN", package)
-            status := 1
+            resultCVTN := 1
             break
         }
     }
-    if status = 0 {
-        MsgBox Format("Goi cuoc hien tai la {1} KHONG DUOC CVTN", packageClipboard)
-    }
+    resultGHLH := loopkup(packagesGHLH, packageClipboard)
+
+    titleGUI := "Check CVTN and GHLH"
+    MyGui := Gui(, titleGUI)
+    stringLine := "-------------------------------------------------------------------------"
+    MyGui.Add("Text", "x10 y20 cRed", Format("Gói cước hiện tại là: {1}", packageClipboard))
+    MyGui.Add("Text", "xm", stringLine)
+    MyGui.Add("Text", "x10 y60 cBlue", "CVTN:")
+    MyGui.Add("Text", "xm", stringLine)
+    MyGui.Add("Text", "x10 y100 cBlue", "GHLH:")
+    MyGui.Add("Text", "x10 y120 cBlue", "")
+
+    if resultCVTN = 1
+        MyGui.Add("Text", "x100 y60 cBlack", "TRUE")
+    else
+        MyGui.Add("Text", "x100 y60 cBlack", "FALSE")
+
+    if resultGHLH != 1
+        MyGui.Add("Text", "x100 y100 cBlack", resultGHLH)
+    else
+        MyGui.Add("Text", "x100 y100 cBlack", resultCVTN)
+    MyGui.Show()
 }
 
 ^+l:: {
