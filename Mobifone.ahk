@@ -1,6 +1,7 @@
 ﻿#requires AutoHotkey v2.0
 #SingleInstance force
 
+fontGUI := "Segoe UI"
 ; ------------------------
 ; json
 ; ------------------------
@@ -197,38 +198,72 @@ loopkup(value, key) {
     } catch Error as e {
         date := A_Now
     }
+
+    ; Create GUI with modern style
     titleGUI := "Date Calculator"
-    MyGui := Gui(, titleGUI)
-    stringLine := "-------------------------------------------------------------------------"
-    MyGui.Add("Text", "x10 y20 cRed", "Ngày hiện tại")
-    MyGui.Add("Text", "xm", stringLine)
-    MyGui.Add("Text", "x10 y60 cBlue", "+ 04 ngày:")
-    MyGui.Add("Text", "xm", stringLine)
-    MyGui.Add("Text", "x10 y100 cBlue", "+ 10 ngày:")
-    MyGui.Add("Text", "xm", stringLine)
-    MyGui.Add("Text", "x10 y140 cBlue", "+ 14 ngày:")
-    MyGui.Add("Text", "xm", stringLine)
-    MyGui.Add("Text", "x10 y180 cBlue", "+ 30 ngày:")
-    MyGui.Add("Text", "xm", stringLine)
-    MyGui.Add("Text", "x10 y220 cBlue", "+ 45 ngày:")
-    MyGui.Add("Text", "xm", stringLine)
-    MyGui.Add("Text", "x10 y260 cBlue", "+ 60 ngày:")
-    MyGui.Add("Text", "x10 y270 cBlue", "")
+    MyGui := Gui("+AlwaysOnTop -Caption", titleGUI)
+    MyGui.BackColor := "FFFFFF" ; White background
 
-    MyGui.Add("Text", "x120 y20 cRed", "Ngày tính")
-    MyGui.Add("Text", "x120 y60", FormatDate(DateAdd_Custom(date, 4)))
-    MyGui.Add("Text", "x120 y100", FormatDate(DateAdd_Custom(date, 10)))
-    MyGui.Add("Text", "x120 y140", FormatDate(DateAdd_Custom(date, 14)))
-    MyGui.Add("Text", "x120 y180", FormatDate(DateAdd_Custom(date, 30)))
-    MyGui.Add("Text", "x120 y220", FormatDate(DateAdd_Custom(date, 45)))
-    MyGui.Add("Text", "x120 y260", FormatDate(DateAdd_Custom(date, 60)))
+    ; Title section
+    MyGui.SetFont("s14 bold", fontGUI)
+    MyGui.Add("Text", "x20 y20 w300 Center", "DATE CALCULATOR")
 
-    MyGui.OnEvent("Escape", MyGui_Escape)
-    MyGui_Escape(thisGui) {
-        WinClose titleGUI
+    ; Add full-width separator line
+    MyGui.Add("Text", "x20 y50 w300 c808080", "────────────────────────────────────────")
+
+    ; Current date with column headers
+    MyGui.SetFont("s10 bold", fontGUI)
+    MyGui.Add("Text", "x20 y70 w80", "CURRENT")
+    MyGui.SetFont("s10", fontGUI)
+    MyGui.Add("Text", "x120 y70 w200", FormatDate(date))
+
+    ; Content rows
+    y := 110
+    intervals := [[4, "+4 Days"], [10, "+10 Days"], [14, "+14 Days"],
+        [30, "+30 Days"], [45, "+45 Days"], [60, "+60 Days"]]
+
+    for interval in intervals {
+        days := interval[1]
+        label := interval[2]
+        futureDate := DateAdd_Custom(date, days)
+
+        ; Add separator line
+        if (A_Index > 1) {
+            MyGui.Add("Text", "x20 y" y - 18 " w300 c808080", "────────────────────────────────────────")
+        }
+
+        ; Label column
+        MyGui.Add("Text", "x20 y" y " w80", days " Days")
+
+        ; Date column with color based on past/future
+        color := DateDiff__Custom(futureDate) > 0 ? "c007AFF" : "c808080" ; Apple blue
+        MyGui.Add("Text", "x120 y" y " w200 " color, FormatDate(futureDate))
+
+        y += 35
     }
-    MyGui.Show()
+
+    ; Add minimalist close button
+    closeBtn := MyGui.Add("Text", "x315 y5 w20 h20 Center", "×")
+    closeBtn.SetFont("s14")
+    closeBtn.OnEvent("Click", (*) => MyGui.Destroy())
+
+    ; Add window drag ability
+    OnMessage(0x201, GuiDrag)
+    GuiDrag(wParam, lParam, msg, hwnd) {
+        static init := 0
+        if (init = 0) {
+            OnMessage(0x202, GuiDrag)
+            init := 1
+        }
+        if (wParam = 1) {
+            PostMessage(0xA1, 2)
+        }
+    }
+
+    MyGui.OnEvent("Escape", (*) => MyGui.Destroy())
+    MyGui.Show("w340 h340")
 }
+
 ^+e:: {
     dateString := GetSelectedText()
     date := 0
@@ -237,62 +272,142 @@ loopkup(value, key) {
     } catch Error as e {
         date := A_Now
     }
-    titleGUI := "Date Calculator"
-    MyGui := Gui(, titleGUI)
-    i := 0
-    stringLine := "-------------------------------------------------------------------------"
-    loop 18 {
-        if i = 0 {
-            MyGui.Add("Text", "x10 y20 cRed", "Chu kỳ")
-            MyGui.Add("Text", "x70 y20 cRed", "30 Ngày")
-            MyGui.Add("Text", "x160 y20 cRed", "31 Ngày")
-            MyGui.Add("Text", "xm", stringLine)
-        }
-        else {
-            If i = 17
-                MyGui.Add("Text", "xm", "Hết hạn")
-            else
-                MyGui.Add("Text", "x10", i)
 
-            lastDate30 := DateAdd_Custom(date, 30 * (i - 1))
-            lastDate31 := DateAdd_Custom(date, 31 * (i - 1))
-            if DateDiff__Custom(lastDate30) > 0
-                MyGui.Add("Text", "x70 yp cBlue	", FormatDate(lastDate30))
-            else
-                MyGui.Add("Text", "x70 yp", FormatDate(lastDate30))
+    ; Create GUI with modern style
+    titleGUI := "Payment Cycles"
+    MyGui := Gui("+AlwaysOnTop -Caption", titleGUI)
+    MyGui.BackColor := "FFFFFF" ; Light background
 
-            if DateDiff__Custom(lastDate31) > 0
-                MyGui.Add("Text", "x160 yp cBlue", FormatDate(lastDate31))
-            else
-                MyGui.Add("Text", "x160 yp", FormatDate(lastDate31))
-            MyGui.Add("Text", "xm", stringLine)
+    ; Title section
+    MyGui.SetFont("s14 bold", fontGUI)
+    MyGui.Add("Text", "x20 y20 w300 Center", "PAYMENT CYCLES")
+
+    ; Add full-width separator line
+    MyGui.Add("Text", "x20 y50 w300 c808080", "────────────────────────────────────────")
+
+    ; Column headers
+    MyGui.SetFont("s10 bold", fontGUI)
+    MyGui.Add("Text", "x20 y70 w80", "CYCLE")
+    MyGui.Add("Text", "x120 y70 w100", "30 DAYS")
+    MyGui.Add("Text", "x220 y70 w100", "31 DAYS")
+
+    ; Content rows
+    MyGui.SetFont("s10", fontGUI)
+    y := 110
+
+    loop 17 {
+        ; Calculate dates
+        lastDate30 := DateAdd_Custom(date, 30 * (A_Index - 1))
+        lastDate31 := DateAdd_Custom(date, 31 * (A_Index - 1))
+
+        ; Add full-width separator
+        if (A_Index > 1) {
+            MyGui.Add("Text", "x20 y" y - 18 " w300 c808080", "────────────────────────────────────────")
         }
-        i := i + 1
+
+        ; Cycle number
+        MyGui.Add("Text", "x20 y" y " w80", A_Index)
+
+        ; 30 day date
+        color := DateDiff__Custom(lastDate30) > 0 ? "c007AFF" : "c808080" ; Apple blue
+        MyGui.Add("Text", "x120 y" y " w100 " color, FormatDate(lastDate30))
+
+        ; 31 day date
+        color := DateDiff__Custom(lastDate31) > 0 ? "c007AFF" : "c808080"
+        MyGui.Add("Text", "x220 y" y " w100 " color, FormatDate(lastDate31))
+
+        y += 35
     }
 
-    MyGui.OnEvent("Escape", MyGui_Escape)
-    MyGui_Escape(thisGui) {
-        WinClose titleGUI
+    ; Add expired row with Apple red
+    MyGui.Add("Text", "x20 y" y " w80 cFF3B30", "Expired")
+
+    ; Add minimalist close button
+    closeBtn := MyGui.Add("Text", "x315 y5 w20 h20 Center", "×")
+    closeBtn.SetFont("s14")
+    closeBtn.OnEvent("Click", (*) => MyGui.Destroy())
+
+    ; Add window drag ability
+    OnMessage(0x201, GuiDrag)
+    GuiDrag(wParam, lParam, msg, hwnd) {
+        static init := 0
+        if (init = 0) {
+            OnMessage(0x202, GuiDrag)
+            init := 1
+        }
+        if (wParam = 1) {
+            PostMessage(0xA1, 2)
+        }
     }
-    MyGui.Show()
+
+    MyGui.OnEvent("Escape", (*) => MyGui.Destroy())
+    MyGui.Show("w340 h700")
 }
 
 ;* Tra cứu các profile đăng ký gói DT20
 ^+y:: {
+    ; Define eligible profiles
     profiles := Map()
     for _, v in ["QT2", "TT2", "YT2", "RZT2", "SVT2", "TNT2", "WT2", "KT2", "TBT2", "Q263", "QTN1", "QTN2", "HAT2", "MCP", "SBK", "BKS", "ZMT", "DHMT", "ZHN", "W2G"]
         profiles[v] := true
+
     profile := Trim(GetSelectedText())
     canRegister := profiles.Has(profile)
 
-    title := "Check DT20"
-    gui := Gui(, title)
-    line := "-------------------------------------------------------------------------"
-    gui.Add("Text", "x10 y20 cBlack", Format("Profile hiện tại: {1}", profile))
-    gui.Add("Text", "x130 y20 " (canRegister ? "cBlue" : "cRed"), canRegister ? "Có thể đăng ký gói DT20" : "Không thể đăng ký gói DT20")
-    gui.Add("Text", "xm", line)
-    gui.OnEvent("Escape", (*) => WinClose(title))
-    gui.Show()
+    ; Create main GUI
+    titleGUI := "Profile Checker"
+    MyGui := Gui("+AlwaysOnTop -Caption", titleGUI)
+    MyGui.BackColor := "FFFFFF"
+
+    ; Add title
+    MyGui.SetFont("s14 bold", fontGUI)
+    MyGui.Add("Text", "x20 y20 w300 Center", "KIỂM TRA GÓI DT20")
+
+    ; Add separator
+    MyGui.Add("Text", "x20 y50 w300 c808080", "────────────────────────────────────────")
+
+    ; Current profile section
+    MyGui.SetFont("s10 bold", fontGUI)
+    MyGui.Add("Text", "x20 y80", "PROFILE:")
+    MyGui.Add("Text", "x120 y80 c007AFF", profile) ; Apple blue
+
+    ; Status section
+    MyGui.SetFont("s10 bold", fontGUI)
+    MyGui.Add("Text", "x20 y120", "TRẠNG THÁI:")
+
+    statusColor := canRegister ? "c34C759" : "cFF3B30" ; Apple green/red
+    statusText := canRegister ? "✓ Được phép đăng ký" : "✗ Không được phép"
+    MyGui.Add("Text", "x120 y120 " statusColor, statusText)
+
+    ; Add warning if not eligible
+    if !canRegister {
+        MyGui.Add("Text", "x20 y160 w300 cFF9500", "Lưu ý: Profile này không thể đăng ký gói DT20")
+    }
+
+    ; Add close button
+    closeBtn := MyGui.Add("Text", "x315 y5 w20 h20 Center", "×")
+    closeBtn.SetFont("s14")
+    closeBtn.OnEvent("Click", (*) => MyGui.Destroy())
+
+    ; Add drag functionality
+    OnMessage(0x201, GuiDrag)
+    GuiDrag(wParam, lParam, msg, hwnd) {
+        static init := 0
+        if (init = 0) {
+            OnMessage(0x202, GuiDrag)
+            init := 1
+        }
+        if (wParam = 1) {
+            PostMessage(0xA1, 2)
+        }
+    }
+
+    ; Show GUI
+    MyGui.OnEvent("Escape", (*) => MyGui.Destroy())
+    MyGui.Show("w340 " (canRegister ? "h160" : "h200"))
+
+    ; Auto-close after 3 seconds
+    SetTimer () => MyGui.Destroy(), -3000
 }
 ;* Tra cuu so dien thoai tong dai
 ^+s:: {
@@ -318,7 +433,6 @@ loopkup(value, key) {
     phone := RegExReplace(phone, "^0", "")
     prefix := SubStr(phone, 1, 2)
     carrier := ""
-    result := ""
 
     for name, arr in prefixes {
         for _, pfx in arr {
@@ -329,12 +443,58 @@ loopkup(value, key) {
         }
     }
 
+    ; Create minimal GUI
+    titleGUI := "Carrier Info"
+    MyGui := Gui("+AlwaysOnTop -Caption", titleGUI)
+    MyGui.BackColor := "FFFFFF" ; White background
+
+    ; Title section
+    MyGui.SetFont("s14 bold", fontGUI)
+    MyGui.Add("Text", "x20 y20 w340 Center", "THÔNG TIN NHÀ MẠNG")
+
+    ; Add separator line
+    MyGui.Add("Text", "x20 y50 w340 c808080", "────────────────────────────────────────")
+
+    ; Phone number section
+    MyGui.SetFont("s10 bold", fontGUI)
+    MyGui.Add("Text", "x20 y80", "SỐ ĐIỆN THOẠI:")
+    MyGui.Add("Text", "x140 y80 c007AFF", phone) ; Apple blue
+
+    ; Carrier section
+    MyGui.Add("Text", "x20 y120", "NHÀ MẠNG:")
     if carrier {
-        result := Format("Số điện thoại {1} - {2}`n`nTổng đài: {3}", phone, carrier, hotline[carrier])
+        MyGui.Add("Text", "x140 y120 c34C759", carrier) ; Apple green
+
+        ; Hotline section
+        MyGui.Add("Text", "x20 y160", "TỔNG ĐÀI:")
+        MyGui.Add("Text", "x140 y160 w220", hotline[carrier])
     } else {
-        result := Format("Không tìm thấy nhà mạng cho số điện thoại: {1}", phone)
+        MyGui.Add("Text", "x140 y120 cFF3B30", "Không tìm thấy") ; Apple red
     }
-    MsgBox result
+
+    ; Add close button
+    closeBtn := MyGui.Add("Text", "x355 y5 w20 h20 Center", "×")
+    closeBtn.SetFont("s14")
+    closeBtn.OnEvent("Click", (*) => MyGui.Destroy())
+
+    ; Add window drag ability
+    OnMessage(0x201, GuiDrag)
+    GuiDrag(wParam, lParam, msg, hwnd) {
+        static init := 0
+        if (init = 0) {
+            OnMessage(0x202, GuiDrag)
+            init := 1
+        }
+        if (wParam = 1) {
+            PostMessage(0xA1, 2)
+        }
+    }
+
+    MyGui.OnEvent("Escape", (*) => MyGui.Destroy())
+    MyGui.Show("w380 " (carrier ? "h200" : "h160"))
+
+    ; Auto-close after 3 seconds
+    SetTimer () => MyGui.Destroy(), -3000
 }
 ;* Tra cuu hoa hong dai ly va thuc nhan
 ^+d:: {
@@ -436,34 +596,6 @@ FormatLoanInfo(code, info) {
     MyGui.Show("")
 }
 
-;* Chuyen doi giay sang gio, phut
-^+j:: {
-    seconds := GetSelectedText()
-    if !IsInteger(seconds) {
-        MsgBox "Vui lòng chọn một số giây hợp lệ."
-        return
-    }
-
-    hours := Floor(seconds / 3600)
-    minutes := Floor(Mod(seconds, 3600) / 60)
-    secs := Mod(seconds, 60)
-    MsgBox Format("{1} Giờ {2} Phút {3} Giây", hours, minutes, secs)
-}
-
-;* Chuyen doi KB sang MB, GB
-^+k:: {
-    kb := GetSelectedText()
-    if !IsInteger(kb) {
-        MsgBox "Vui lòng chọn một số KB hợp lệ."
-        return
-    }
-
-    mb := Round(kb / 1024, 2)
-    gb := Round(kb / 1024 / 1024, 2)
-    result := Format("{1} MB, {2} GB", mb, gb)
-    A_Clipboard := result
-    MsgBox Format("Kích thước {1} KB tương đương với {2}", kb, result)
-}
 
 ;* Tra cứu lịch sử dịch vụ
 ^+l:: {
@@ -564,6 +696,109 @@ FormatLoanInfo(code, info) {
 
     serviceKey := GetSelectedText()
     MsgBox loopkup(serviceHistory, serviceKey)
+}
+
+;* Chuyen doi giay sang gio, phut
+^+j:: {
+    seconds := GetSelectedText()
+    if !IsInteger(seconds) {
+        MsgBox "Vui lòng chọn một số giây hợp lệ."
+        return
+    }
+
+    hours := Floor(seconds / 3600)
+    minutes := Floor(Mod(seconds, 3600) / 60)
+    secs := Mod(seconds, 60)
+
+    ; Create minimal GUI
+    guiTitle := "Time Converter"
+    MyGui := Gui("+AlwaysOnTop -Caption", guiTitle)
+    MyGui.BackColor := "FFFFFF" ; White background
+
+    ; Add shadow effect
+    MyGui.SetFont("s12", "Segoe UI")
+
+    ; Time display with large numbers
+    MyGui.SetFont("s24 bold", "SF Pro Display")
+    timeText := Format("{1:02d}:{2:02d}:{3:02d}", hours, minutes, secs)
+    MyGui.Add("Text", "x20 y20 w240 Center", timeText)
+
+    ; Labels underneath
+    MyGui.SetFont("s10", "SF Pro Text")
+    MyGui.Add("Text", "x20 y70 w80 Center", "Hours")
+    MyGui.Add("Text", "x100 y70 w80 Center", "Minutes")
+    MyGui.Add("Text", "x180 y70 w80 Center", "Seconds")
+
+    ; Add close button in top-right
+    MyGui.SetFont("s10", "Segoe UI")
+    closeBtn := MyGui.Add("Text", "x255 y5 w20 h20 Center", "×")
+    closeBtn.SetFont("s16 bold")
+    closeBtn.OnEvent("Click", (*) => MyGui.Destroy())
+
+    ; Rounded corners and padding
+    MyGui.Show("w280 h100")
+
+    ; Allow dragging window
+    OnMessage(0x201, GuiDrag)
+    GuiDrag(wParam, lParam, msg, hwnd) {
+        static init := 0
+        if (init = 0) {
+            OnMessage(0x202, GuiDrag)
+            init := 1
+        }
+        if (wParam = 1) {
+            PostMessage(0xA1, 2)
+        }
+    }
+    MyGui.OnEvent("Escape", (*) => WinClose(guiTitle))
+    MyGui.Show()
+    ; Auto-close after 3 seconds
+    SetTimer () => MyGui.Destroy(), -3000
+}
+
+;* Chuyen doi KB sang MB, GB
+^+k:: {
+    kb := GetSelectedText()
+    if !IsInteger(kb) {
+        MsgBox "Vui lòng chọn một số KB hợp lệ."
+        return
+    }
+
+    mb := Round(kb / 1024, 2)
+    gb := Round(kb / 1024 / 1024, 2)
+
+    ; Create GUI with a title
+    guiTitle := "Size Converter"
+    MyGui := Gui("+AlwaysOnTop", guiTitle)
+
+    ; Add gradient background effect
+    MyGui.BackColor := "F0F8FF" ; Light blue background
+
+    ; KB Display (larger and bold)
+    MyGui.SetFont("s14 bold", "Segoe UI")
+    MyGui.Add("Text", "x10 y10 w200 cNavy", Format("Input: {1} KB", kb))
+
+    ; Separator line
+    MyGui.Add("Text", "x10 y35 w180 c0066CC", "──────────────────")
+
+    ; Conversion results with colors
+    MyGui.SetFont("s12", "Segoe UI")
+    MyGui.Add("Text", "x10 y50 w200 c4169E1", Format("≈ {1} MB", mb))
+    MyGui.Add("Text", "x10 y80 w200 c1E90FF", Format("≈ {1} GB", gb))
+
+    ; Copy results to clipboard based on size
+    if (mb >= 500) {
+        A_Clipboard := Format("{1} MB, {2} GB", mb, gb)
+    } else {
+        A_Clipboard := Format("{1} MB", mb)
+    }
+
+    ; Show GUI
+    MyGui.OnEvent("Escape", (*) => WinClose(guiTitle))
+    MyGui.Show()
+
+    ; Auto-close after 3 seconds
+    SetTimer () => MyGui.Destroy(), -3000
 }
 
 ; * Send key F1, F2, F3, F4 to the active window
