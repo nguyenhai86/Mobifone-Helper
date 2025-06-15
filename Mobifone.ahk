@@ -145,9 +145,9 @@ DateParse(str, americanOrder := 0) {
     }
     return retVal
 }
-loopkup(dataLS, key) {
-    if dataLS.HasOwnProp(key) = 1 {
-        return dataLS.GetOwnPropDesc(key).Value
+loopkup(value, key) {
+    if value.HasOwnProp(key) = 1 {
+        return value.GetOwnPropDesc(key).Value
     }
     else {
         return "Key not found"
@@ -261,286 +261,212 @@ loopkup(dataLS, key) {
     MyGui.Show()
 }
 
-^Escape:: {
-    if WinActive("ahk_class Package") || WinActive("ahk_class" "WindowsForms10.Window.8.app.0.1ca0192_r10_ad1")
-        WinClose
-}
-
-;* Tra cuu cac profile dang ky goi DT20
+;* Tra cứu các profile đăng ký gói DT20
 ^+y:: {
-    profiles := ["QT2", "TT2", "YT2", "RZT2", "SVT2", "TNT2", "WT2", "KT2", "TBT2", "Q263", "QTN1", "QTN2", "HAT2", "MCP", "SBK", "BKS", "ZMT", "DHMT", "ZHN", "W2G"]
-    profileClipboard := GetSelectedText()
-    result := 0
-    for index, profile in profiles {
-        if profile = profileClipboard {
-            result := 1
-            break
-        }
-    }
+    profiles := Map()
+    for _, v in ["QT2", "TT2", "YT2", "RZT2", "SVT2", "TNT2", "WT2", "KT2", "TBT2", "Q263", "QTN1", "QTN2", "HAT2", "MCP", "SBK", "BKS", "ZMT", "DHMT", "ZHN", "W2G"]
+        profiles[v] := true
+    profile := Trim(GetSelectedText())
+    canRegister := profiles.Has(profile)
 
-    titleGUI := "Check DT20"
-    MyGui := Gui(, titleGUI)
-    stringLine := "-------------------------------------------------------------------------"
-    MyGui.Add("Text", "x10 y20 cBlack", Format("Profile Hiện tại là {1}", profileClipboard))
-    if result = 1
-        MyGui.Add("Text", "x130 y20 cBlue", "có thể đăng ký gói DT20")
-    else
-        MyGui.Add("Text", "x130 y20 cRed", "Không thể đăng ký gói DT20")
-    MyGui.Add("Text", "xm", stringLine)
-
-    MyGui.OnEvent("Escape", MyGui_Escape)
-    MyGui_Escape(thisGui) {
-        WinClose titleGUI
-    }
-    MyGui.Show()
+    title := "Check DT20"
+    gui := Gui(, title)
+    line := "-------------------------------------------------------------------------"
+    gui.Add("Text", "x10 y20 cBlack", Format("Profile hiện tại: {1}", profile))
+    gui.Add("Text", "x130 y20 " (canRegister ? "cBlue" : "cRed"), canRegister ? "Có thể đăng ký gói DT20" : "Không thể đăng ký gói DT20")
+    gui.Add("Text", "xm", line)
+    gui.OnEvent("Escape", (*) => WinClose(title))
+    gui.Show()
 }
-
 ;* Tra cuu so dien thoai tong dai
 ^+s:: {
-    ; Define the phone prefixes and corresponding customer service numbers
-    Viettel := ["86", "96", "97", "98", "32", "33", "34", "35", "36", "37", "38", "39"]
-    Mobifone := ["89", "90", "93", "70", "76", "77", "78", "79"]
-    Vinaphone := ["88", "91", "94", "83", "84", "85", "81", "82"]
-    GtelMobile := ["99", "59"]
-    VietNamMobile := ["92", "52", "56", "58"]
-    Itelecom := ["87"]
+    ; Define carrier prefixes and customer service numbers
+    prefixes := Map(
+        "Viettel", ["86", "96", "97", "98", "32", "33", "34", "35", "36", "37", "38", "39"],
+        "Mobifone", ["89", "90", "93", "70", "76", "77", "78", "79"],
+        "Vinaphone", ["88", "91", "94", "83", "84", "85", "81", "82"],
+        "GtelMobile", ["99", "59"],
+        "Vietnamobile", ["92", "52", "56", "58"],
+        "Itelecom", ["87"]
+    )
+    hotline := Map(
+        "Viettel", "18008098 - Cuộc gọi miễn phí",
+        "Mobifone", "18001090 - Cuộc gọi miễn phí",
+        "Vinaphone", "18001091 - Cuộc gọi miễn phí",
+        "GtelMobile", "0993 196 196 - Cuộc gọi thông thường",
+        "Vietnamobile", "789 - Miễn phí / 0922789789 - Cuộc gọi thông thường",
+        "Itelecom", "0877 087 087 - Cuộc gọi thông thường"
+    )
 
-    tongDai := { Viettel: "18008098 - Cuoc goi mien phi", Mobifone: "18001090 - Cuoc goi mien phi", Vinaphone: "18001091 - Cuoc goi mien phi", GtelMobile: "0993 196 196 - Cuoc goi thong thuong", VietNamMobile: "789 - Mien phi / 0922789789 - Cuoc goi thong thuong", Itelecom: "0877 087 087 - Cuoc goi thong thuong" }
-
-    phoneNumber := GetSelectedText()
-    ;remove number 0 at the beginning none 84
-    phoneNumber := RegExReplace(phoneNumber, "^0", "")
-    prefix := SubStr(phoneNumber, 1, 2)
+    phone := GetSelectedText()
+    phone := RegExReplace(phone, "^0", "")
+    prefix := SubStr(phone, 1, 2)
+    carrier := ""
     result := ""
-    status := 0
-    ; Viettel
-    if status = 0 {
-        for index, value in Viettel {
-            if (prefix = value) {
-                result := Format("So dien thoai {1} - {2} `n`nTong dai: {3}", phoneNumber, "Viettel", tongDai.Viettel)
-                status := 1
-                break
+
+    for name, arr in prefixes {
+        for _, pfx in arr {
+            if (prefix = pfx) {
+                carrier := name
+                break 2
             }
         }
     }
 
-    ; Mobifone
-    if status = 0 {
-        for index, value in Mobifone {
-            if (prefix = value) {
-                result := Format("So dien thoai {1} - {2} `n`nTong dai: {3}", phoneNumber, "Mobifone", tongDai.Mobifone)
-                status := 1
-                break
-            }
-        }
-    }
-
-    ; Vinaphone
-    if status = 0 {
-        for index, value in Vinaphone {
-            if (prefix = value) {
-                result := Format("So dien thoai {1} - {2} `n`nTong dai: {3}", phoneNumber, "Vinaphone", tongDai.Vinaphone)
-                status := 1
-                break
-            }
-        }
-    }
-    ; GtelMobile
-    if status = 0 {
-        for index, value in GtelMobile {
-            if (prefix = value) {
-                result := Format("So dien thoai {1} - {2} `n`nTong dai: {3}", phoneNumber, "GtelMobile", tongDai.GtelMobile)
-                status := 1
-                break
-            }
-        }
-    }
-
-    ; VietNamMobile
-    if status = 0 {
-        for index, value in VietNamMobile {
-            if (prefix = value) {
-                result := Format("So dien thoai {1} - {2} `n`nTong dai: {3}", phoneNumber, "VietNamMobile", tongDai.VietNamMobile)
-                status := 1
-                break
-            }
-        }
-    }
-
-    ; Itelecom
-    if status = 0 {
-        for index, value in Itelecom {
-            if (prefix = value) {
-                result := Format("So dien thoai {1} - {2} `n`nTong dai: {3}", phoneNumber, "Itelecom", tongDai.Itelecom)
-                status := 1
-                break
-            }
-        }
-    }
-    if status = 0 {
-        result := Format("Khong tim thay nha mang cho so dien thoai: {1}", phoneNumber)
+    if carrier {
+        result := Format("Số điện thoại {1} - {2}`n`nTổng đài: {3}", phone, carrier, hotline[carrier])
+    } else {
+        result := Format("Không tìm thấy nhà mạng cho số điện thoại: {1}", phone)
     }
     MsgBox result
 }
 ;* Tra cuu hoa hong dai ly va thuc nhan
 ^+d:: {
-    tiLeDaiLy := 0.159
-    tiLeThucNhan := 0.127
-    IB := InputBox("Nhập giá gói cước", "Tinh hoa hong", "w150 h100")
-    editValue := Trim(IB.Value)
+    commissionRateAgent := 0.159
+    commissionRateNet := 0.127
+    inputBox := InputBox("Nhập giá gói cước", "Tính hoa hồng", "w150 h100")
+    packagePrice := Trim(inputBox.Value)
 
-    If editValue {
-        MsgBox Format("Hoa hong dai ly: {1}`n`nHoa hong thuc nhan: {2}", Round(editValue * tiLeDaiLy), Round(editValue * tiLeThucNhan))
+    if packagePrice {
+        agentCommission := Round(packagePrice * commissionRateAgent)
+        netCommission := Round(packagePrice * commissionRateNet)
+        MsgBox Format("Hoa hồng đại lý: {1}`n`nHoa hồng thực nhận: {2}", agentCommission, netCommission)
     }
 }
-;* Tong dai ung tien
-GetInfoByCodeOrCompletionCode(codes, value) {
-    if (codes.Has(value))
-        return DisplayInfo(value, codes[value])
+;* Tổng đài ứng tiền
+ShowAdvanceInfoByCodeOrCompletionCode(advanceCodes, inputValue) {
+    if (advanceCodes.Has(inputValue))
+        return FormatAdvanceInfo(inputValue, advanceCodes[inputValue])
 
-
-    for key, info in codes {
-        if (info.Has("Mã hoàn ứng") && (info["Mã hoàn ứng"] = value))
-            return DisplayInfo(key, info)
-
+    for code, info in advanceCodes {
+        if (info.Has("Mã hoàn ứng") && (info["Mã hoàn ứng"] = inputValue))
+            return FormatAdvanceInfo(code, info)
     }
+    return "Không tìm thấy thông tin cho: " inputValue
 }
-DisplayInfo(key, info) {
-    infoStr := "Code: " key "`n"
-    for k, v in info {
-        infoStr .= k ": " v "`n"
+FormatAdvanceInfo(code, info) {
+    infoText := "Mã dịch vụ: " code "`n"
+    for field, value in info {
+        infoText .= field ": " value "`n"
     }
-    return infoStr
+    return infoText
 }
 ^+u:: {
-    codes := Map(
-        "9015", Map("Time", "chờ 24h", "Tài khoản", "TKC", "Kiểm tra nợ", "KT", "DK ứng tự động", "UDT/SUBS", "Hủy ứng tự động", "HUY UTD", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "HU"),
-        "9913", Map("Time", "", "Tài khoản", "TK_AP1: - Thoại/SMS nội mạng, liên mạng.", "Kiểm tra nợ", "", "DK ứng tự động", "TD", "Hủy ứng tự động", "HUY TD", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "UACHU"),
-        "9928", Map("Time", "", "Tài khoản", "Phút gọi", "Kiểm tra nợ", "TT", "DK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "HT", "Mã hoàn ứng", "MBHU"),
-        "9363", Map("Time", "", "Tài khoản", "KM3: Thoại/SMS nội mạng, liên mạng / DT20", "Kiểm tra nợ", "KT", "DK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "MBFHU"),
-        "9070", Map("Time", "24h", "Tài khoản", "Data", "Kiểm tra nợ", "KT", "DK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "TT", "Mã hoàn ứng", "DT247HU"),
-        "1256", Map("Time", "7 ngày", "Tài khoản", "TKC", "Kiểm tra nợ", "KT", "DK ứng tự động", "UDT", "Hủy ứng tự động", "HUY", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "EHU"),
-        "1255", Map("Time", "", "Tài khoản", "TK_AP2: Thoại/SMS nội mạng, liên mạng.", "Kiểm tra nợ", "", "DK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "UAGHU"),
-        "5110", Map("Time", "", "Tài khoản", "Phút gọi", "Kiểm tra nợ", "KT", "DK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "HT", "Mã hoàn ứng", "SPHU")
+    advanceCodes := Map(
+        "9015", Map("Thời gian", "chờ 24h", "Tài khoản", "TKC", "Kiểm tra nợ", "KT", "ĐK ứng tự động", "UDT/SUBS", "Hủy ứng tự động", "HUY UTD", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "HU"),
+        "9913", Map("Thời gian", "", "Tài khoản", "TK_AP1: - Thoại/SMS nội mạng, liên mạng.", "Kiểm tra nợ", "", "ĐK ứng tự động", "TD", "Hủy ứng tự động", "HUY TD", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "UACHU"),
+        "9928", Map("Thời gian", "", "Tài khoản", "Phút gọi", "Kiểm tra nợ", "TT", "ĐK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "HT", "Mã hoàn ứng", "MBHU"),
+        "9363", Map("Thời gian", "", "Tài khoản", "KM3: Thoại/SMS nội mạng, liên mạng / DT20", "Kiểm tra nợ", "KT", "ĐK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "MBFHU"),
+        "9070", Map("Thời gian", "24h", "Tài khoản", "Data", "Kiểm tra nợ", "KT", "ĐK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "TT", "Mã hoàn ứng", "DT247HU"),
+        "1256", Map("Thời gian", "7 ngày", "Tài khoản", "TKC", "Kiểm tra nợ", "KT", "ĐK ứng tự động", "UDT", "Hủy ứng tự động", "HUY", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "EHU"),
+        "1255", Map("Thời gian", "", "Tài khoản", "TK_AP2: Thoại/SMS nội mạng, liên mạng.", "Kiểm tra nợ", "", "ĐK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "UAGHU"),
+        "5110", Map("Thời gian", "", "Tài khoản", "Phút gọi", "Kiểm tra nợ", "KT", "ĐK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "HT", "Mã hoàn ứng", "SPHU")
     )
     oldClipboard := A_Clipboard
     Send "^c"
     Sleep 500
-    newClipboard := A_Clipboard
-    value := Trim(newClipboard)
+    clipboardValue := Trim(A_Clipboard)
     A_Clipboard := oldClipboard
-    MsgBox GetInfoByCodeOrCompletionCode(codes, value)
+    MsgBox ShowAdvanceInfoByCodeOrCompletionCode(advanceCodes, clipboardValue)
 }
 
-;* Tra cứu gói được CVTN và GHLH
+;* Tra cứu gói được CVTN (Chuyển vùng trong nước) và GHLH (Gia hạn linh hoạt)
 ^+g:: {
-    packagesCVTN := [
-        "3MXH90", "6MXH90", "12MXH90", "3MXH100", "6MXH100", "12MXH100", "3MXH120", "6MXH120", "12MXH120", "3MXH150", "6MXH150", "12MXH150", "3MF159", "6MF159", "12MF159", "3KC120", "6KC120", "12KC120", "3KC150", "6KC150", "12KC150", "3NA70", "6NA70", "12NA70", "3NA90", "6NA90", "12NA90", "3NA120", "6NA120", "12NA120", "3S135", "6S135", "12S135", "3S159", "6S159", "12S159", "3MW90", "6MW90", "12MW90", "3MWG110", "6MWG110", "12MWG110", "3MWG125", "6MWG125", "12MWG125", "3MWG135", "6MWG135", "12MWG135", "3MWG155", "6MWG155", "12MWG155", "3MGX90", "6MGX90", "12MGX90", "3MGX110", "6MGX110", "12MGX110", "3MGX125", "6MGX125", "12MGX125", "3MAX90", "6MAX90", "12MAX90", "3V90", "6V90", "12V90", "3GX159", "6GX159", "12GX159", "3GX139", "6GX139", "12GX139", "MXH90", "MXH100", "MXH120", "MXH150", "MF159", "KC120", "KC150", "NA70", "NA90", "NA120", "S135", "S159", "MW90", "MWG110", "MWG125", "MWG135", "MWG155", "MGX90", "MGX110", "MGX125", "MAX90", "V90", "GX159", "GX139", "C120K", "12C120K", "MF219", "MF329", "3MF219", "6MF219", "12MF219", "3MF329", "6MF329", "12MF329", "3E300", "6E300", "12E300", "5GV", "5GC", "5GLQ", "3E500", "6E1000", "12E1000", "VZ100", "12VZ100", "VZ135", "12VZ135", "C90N", "3C90N", "6C90N", "12C90N", "3TK135", "6TK135", "12TK135", "TK135", 'KC90', '3KC90', '6KC90', '12KC90', '3TK159', '6TK159', '12TK159', 'TK159', '3PT90', '6PT90', '12PT90', 'PT90'
+    eligibleCVTN := [
+        "3MXH90", "6MXH90", "12MXH90", "3MXH100", "6MXH100", "12MXH100", "3MXH120", "6MXH120", "12MXH120", "3MXH150", "6MXH150", "12MXH150", "3MF159", "6MF159", "12MF159", "3KC120", "6KC120", "12KC120", "3KC150", "6KC150", "12KC150", "3NA70", "6NA70", "12NA70", "3NA90", "6NA90", "12NA90", "3NA120", "6NA120", "12NA120", "3S135", "6S135", "12S135", "3S159", "6S159", "12S159", "3MW90", "6MW90", "12MW90", "3MWG110", "6MWG110", "12MWG110", "3MWG125", "6MWG125", "12MWG125", "3MWG135", "6MWG135", "12MWG135", "3MWG155", "6MWG155", "12MWG155", "3MGX90", "6MGX90", "12MGX90", "3MGX110", "6MGX110", "12MGX110", "3MGX125", "6MGX125", "12MGX125", "3MAX90", "6MAX90", "12MAX90", "3V90", "6V90", "12V90", "3GX159", "6GX159", "12GX159", "3GX139", "6GX139", "12GX139", "MXH90", "MXH100", "MXH120", "MXH150", "MF159", "KC120", "KC150", "NA70", "NA90", "NA120", "S135", "S159", "MW90", "MWG110", "MWG125", "MWG135", "MWG155", "MGX90", "MGX110", "MGX125", "MAX90", "V90", "GX159", "GX139", "C120K", "12C120K", "MF219", "MF329", "3MF219", "6MF219", "12MF219", "3MF329", "6MF329", "12MF329", "3E300", "6E300", "12E300", "5GV", "5GC", "5GLQ", "3E500", "6E1000", "12E1000", "VZ100", "12VZ100", "VZ135", "12VZ135", "C90N", "3C90N", "6C90N", "12C90N", "3TK135", "6TK135", "12TK135", "TK135", "KC90", "3KC90", "6KC90", "12KC90", "3TK159", "6TK159", "12TK159", "TK159", "3PT90", "6PT90", "12PT90", "PT90"
     ]
 
-    packagesGHLH := {}
-    packagesGHLH.KC90 := '12.000 đ' ;
-    packagesGHLH.TK135 := '4.500 đ' ;
-    packagesGHLH.C120 := '20.000 đ' ;
-    packagesGHLH.C90 := '12.000 đ' ;
-    packagesGHLH.C90N := '12.000 đ' ;
-    packagesGHLH.KC120 := '16.000 đ' ;
-    packagesGHLH.KC150 := '25.000 đ' ;
-    packagesGHLH.PT120 := '10.000 đ' ;
-    packagesGHLH.PT70 := '2.500 đ' ;
-    packagesGHLH.PT90 := '3.000 đ' ;
-    packagesGHLH.C120N := '16.000 đ' ;
-    packagesGHLH.C120K := '28.000 đ' ;
-    packagesGHLH.C120T := '28.000 đ' ;
-    packagesGHLH.TK159 := '21.200 đ' ;
-    packagesGHLH.TK219 := '29.200 đ' ;
-    packagesGHLH.MXH80 := '6.000 đ' ;
-    packagesGHLH.MXH90 := '6.000 đ' ;
-    packagesGHLH.MXH100 := '7.000 đ' ;
-    packagesGHLH.MXH120 := '20.000 đ' ;
-    packagesGHLH.MXH150 := '30.000 đ' ;
-    packagesGHLH.C50N := '40.000 đ' ;
-    packagesGHLH.FD60 := '2.000 đ' ;
-    packagesGHLH.21G := '4.000 đ'
-    packagesGHLH.24G := '6.600 đ'
-    packagesGHLH.12C120 := '120.000 đ'
-    packagesGHLH.12C90N := '90.000 đ' ;
-    packagesGHLH.12C50N := '50.000 đ' ;
-    packagesGHLH.12KC150 := '150.000 đ' ;
-    packagesGHLH.12KC120 := '120.000 đ' ;
-    packagesGHLH.12KC90 := '90.000 đ' ;
-    packagesGHLH.12PT120 := '120.000 đ' ;
-    packagesGHLH.12PT90 := '90.000 đ' ;
-    packagesGHLH.12PT70 := '70.000 đ' ;
-    packagesGHLH.12MXH150 := '150.000 đ' ;
-    packagesGHLH.12MXH120 := '120.000 đ' ;
-    packagesGHLH.12MXH100 := '100.000 đ' ;
-    packagesGHLH.12MXH90 := '90.000 đ' ;
-    packagesGHLH.12MXH80 := '80.000 đ' ;
-    packagesGHLH.12TK219 := '219.000 đ' ;
-    packagesGHLH.12TK159 := '159.000 đ' ;
-    packagesGHLH.12TK135 := '135.000 đ' ;
-    packagesGHLH.NA70 := '7.000 đ' ;
-    packagesGHLH.NA90 := '6.000 đ' ;
-    packagesGHLH.NA120 := '6.000 đ' ;
-    packagesGHLH.MBF30 := '10.000 đ' ;
-    packagesGHLH.EDU100 := '10.000 đ' ;
-    packagesGHLH.ME100 := '10.000 đ' ;
-    packagesGHLH.AG90 := '5.000 đ' ;
-    packagesGHLH.AG100 := '10.000 đ' ;
-    packagesGHLH.GG135 := '5.000 đ' ;
-    packagesGHLH.GG155 := '35.000 đ' ;
-    packagesGHLH.MCL200 := '5.000 đ' ;
-    packagesGHLH.MCD85 := '5.000 đ' ;
-    packagesGHLH.MCD100 := '10.000 đ' ;
-    packagesGHLH.S135 := '5.000 đ' ;
-    packagesGHLH.S159 := '10.000 đ' ;
-    packagesGHLH.MCD145 := '5.000 đ' ;
-    packagesGHLH.MC150 := '10.000 đ' ;
-    packagesGHLH.MFC165 := '5.000 đ' ;
+    flexibleRenewalFee := Map()
+    flexibleRenewalFee.KC90 := "12.000 đ"
+    flexibleRenewalFee.TK135 := "4.500 đ"
+    flexibleRenewalFee.C120 := "20.000 đ"
+    flexibleRenewalFee.C90 := "12.000 đ"
+    flexibleRenewalFee.C90N := "12.000 đ"
+    flexibleRenewalFee.KC120 := "16.000 đ"
+    flexibleRenewalFee.KC150 := "25.000 đ"
+    flexibleRenewalFee.PT120 := "10.000 đ"
+    flexibleRenewalFee.PT70 := "2.500 đ"
+    flexibleRenewalFee.PT90 := "3.000 đ"
+    flexibleRenewalFee.C120N := "16.000 đ"
+    flexibleRenewalFee.C120K := "28.000 đ"
+    flexibleRenewalFee.C120T := "28.000 đ"
+    flexibleRenewalFee.TK159 := "21.200 đ"
+    flexibleRenewalFee.TK219 := "29.200 đ"
+    flexibleRenewalFee.MXH80 := "6.000 đ"
+    flexibleRenewalFee.MXH90 := "6.000 đ"
+    flexibleRenewalFee.MXH100 := "7.000 đ"
+    flexibleRenewalFee.MXH120 := "20.000 đ"
+    flexibleRenewalFee.MXH150 := "30.000 đ"
+    flexibleRenewalFee.C50N := "40.000 đ"
+    flexibleRenewalFee.FD60 := "2.000 đ"
+    flexibleRenewalFee.21G := "4.000 đ"
+    flexibleRenewalFee.24G := "6.600 đ"
+    flexibleRenewalFee.12C120 := "120.000 đ"
+    flexibleRenewalFee.12C90N := "90.000 đ"
+    flexibleRenewalFee.12C50N := "50.000 đ"
+    flexibleRenewalFee.12KC150 := "150.000 đ"
+    flexibleRenewalFee.12KC120 := "120.000 đ"
+    flexibleRenewalFee.12KC90 := "90.000 đ"
+    flexibleRenewalFee.12PT120 := "120.000 đ"
+    flexibleRenewalFee.12PT90 := "90.000 đ"
+    flexibleRenewalFee.12PT70 := "70.000 đ"
+    flexibleRenewalFee.12MXH150 := "150.000 đ"
+    flexibleRenewalFee.12MXH120 := "120.000 đ"
+    flexibleRenewalFee.12MXH100 := "100.000 đ"
+    flexibleRenewalFee.12MXH90 := "90.000 đ"
+    flexibleRenewalFee.12MXH80 := "80.000 đ"
+    flexibleRenewalFee.12TK219 := "219.000 đ"
+    flexibleRenewalFee.12TK159 := "159.000 đ"
+    flexibleRenewalFee.12TK135 := "135.000 đ"
+    flexibleRenewalFee.NA70 := "7.000 đ"
+    flexibleRenewalFee.NA90 := "6.000 đ"
+    flexibleRenewalFee.NA120 := "6.000 đ"
+    flexibleRenewalFee.MBF30 := "10.000 đ"
+    flexibleRenewalFee.EDU100 := "10.000 đ"
+    flexibleRenewalFee.ME100 := "10.000 đ"
+    flexibleRenewalFee.AG90 := "5.000 đ"
+    flexibleRenewalFee.AG100 := "10.000 đ"
+    flexibleRenewalFee.GG135 := "5.000 đ"
+    flexibleRenewalFee.GG155 := "35.000 đ"
+    flexibleRenewalFee.MCL200 := "5.000 đ"
+    flexibleRenewalFee.MCD85 := "5.000 đ"
+    flexibleRenewalFee.MCD100 := "10.000 đ"
+    flexibleRenewalFee.S135 := "5.000 đ"
+    flexibleRenewalFee.S159 := "10.000 đ"
+    flexibleRenewalFee.MCD145 := "5.000 đ"
+    flexibleRenewalFee.MC150 := "10.000 đ"
+    flexibleRenewalFee.MFC165 := "5.000 đ"
 
-    packageClipboard := getSelectedText()
-    ; Hàm kiểm tra chuỗi chỉ chứa chữ cái và chữ số
-    if !RegExMatch(packageClipboard, "^[a-zA-Z0-9]+$") {
-        MsgBox Format("Gói cước '{1}' không hợp lệ", packageClipboard)
+    packageName := GetSelectedText()
+    if !RegExMatch(packageName, "^[a-zA-Z0-9]+$") {
+        MsgBox Format("Gói cước '{1}' không hợp lệ", packageName)
         return
     }
 
-    resultCVTN := 0
-    resultGHLH := 0
-
-    for index, package in packagesCVTN {
-        if package = packageClipboard {
-            resultCVTN := 1
+    isCVTN := false
+    for _, pkg in eligibleCVTN {
+        if (pkg = packageName) {
+            isCVTN := true
             break
         }
     }
-    resultGHLH := loopkup(packagesGHLH, packageClipboard)
+    renewalFee := loopkup(flexibleRenewalFee, packageName)
 
-    titleGUI := "Check CVTN and GHLH"
-    MyGui := Gui(, titleGUI)
-    stringLine := "-------------------------------------------------------------------------"
-    MyGui.Add("Text", "x10 y20 cRed", Format("Gói cước hiện tại là: '{1}'", packageClipboard))
-    MyGui.Add("Text", "xm", stringLine)
-    MyGui.Add("Text", "x10 y60 cBlue", "CVTN:")
-    MyGui.Add("Text", "xm", stringLine)
-    MyGui.Add("Text", "x10 y100 cBlue", "GHLH:")
-    MyGui.Add("Text", "x10 y120 cBlue", "")
+    guiTitle := "Kiểm tra CVTN và GHLH"
+    guiLine := "-------------------------------------------------------------------------"
+    gui := Gui(, guiTitle)
+    gui.Add("Text", "x10 y20 cRed", Format("Gói cước hiện tại: '{1}'", packageName))
+    gui.Add("Text", "xm", guiLine)
+    gui.Add("Text", "x10 y60 cBlue", "CVTN:")
+    gui.Add("Text", "xm", guiLine)
+    gui.Add("Text", "x10 y100 cBlue", "GHLH:")
+    gui.Add("Text", "x10 y120 cBlue", "")
 
-    if resultCVTN = 1
-        MyGui.Add("Text", "x100 y60 cBlack", "TRUE")
-    else
-        MyGui.Add("Text", "x100 y60 cBlack", "FALSE")
+    gui.Add("Text", "x100 y60 cBlack", isCVTN ? "TRUE" : "FALSE")
+    gui.Add("Text", "x100 y100 cBlack", renewalFee != "Key not found" ? renewalFee : "Không hỗ trợ")
 
-    if resultGHLH != 1
-        MyGui.Add("Text", "x100 y100 cBlack", resultGHLH)
-    else
-        MyGui.Add("Text", "x100 y100 cBlack", resultCVTN)
-    MyGui.OnEvent("Escape", MyGui_Escape)
-    MyGui_Escape(thisGui) {
-        WinClose titleGUI
-    }
-    MyGui.Show()
+    gui.OnEvent("Escape", (*) => WinClose(guiTitle))
+    gui.Show()
 }
 
 ;* Chuyen doi giay sang gio, phut
@@ -574,111 +500,109 @@ DisplayInfo(key, info) {
     MsgBox Format("Kích thước {1} KB tương đương với {2}", kb, result)
 }
 
-;* Tra cuu lich su dich vu
+;* Tra cứu lịch sử dịch vụ
 ^+l:: {
-    dataLS := {}
-    dataLS.3GKK := 'MobiGold hòa mạng mới (do Mobi365 chuyển sang) / Mobi365 chuyển sang MobiGold: có chuyển tiền' ;
-    dataLS.CFKK := 'MobiGold hòa mạng mới (do MobiCard chuyển sang) / Cắt MobiCard để chuyển sang MobiGold' ;
-    dataLS.MCVU := 'MobiGold số công vụ hòa mạng mới (số mới)' ;
-    dataLS.MS := 'MobiGold hòa mạng mới (số mới)' ;
-    dataLS.QFON := 'MobiGold hòa mạng mới (do MobiQ chuyển sang)' ;
-    dataLS.QTEF := 'MobiGold hòa mạng mới (do Q-Teen chuyển sang) / Q-Teen chuyển sang MobiGold' ;
-    dataLS.SVFKK := 'MobiGold hòa mạng mới (do Q-Student chuyển sang) / Q-Student chuyển sang MobiGold' ;
-    dataLS.UFKK := 'MobiGold hòa mạng mới (do Mobi4U chuyển sang) / Mobi4U chuyển sang MobiGold' ;
-    dataLS.ZFKK := 'MobiGold hòa mạng mới (do MobiZone chuyển sang) / MobiZone chuyển sang MobiGold: Còn tiền' ;
-    dataLS.CHS := 'Thay đổi thông tin do thông tin trước đó CH/ ĐLC cập nhật bị sai / Chặn 2 chiều do cửa hàng sau' ;
-    dataLS.DTEN := '- Đổi tên cá nhân := cập nhật thêm tên cá nhân sau tên doanh nghiệp- Đổi tên doanh nghiệp := do doanh nghiệp đổi tên' ;
-    dataLS.KHYC := 'Thay đổi dịch vụ do KHYC / Thay sim / Thay đổi giữa các hình thức trả trước KH tự chuyển / Chặn 2 chiều do khách hàng yêu cầu' ;
-    dataLS.NTNC := 'Nhắn tin thông báo cước' ;
-    dataLS.NTTB := 'Nhắn tin nhắc cước hay nhắn nội dung khác' ;
-    dataLS.WARN := 'Nhắn tin nhắc cước hay nhắn tin báo đỏ' ;
-    dataLS.PAID := 'Mở 2 chiều do thanh toán nợ cước' ;
-    dataLS.PAID := 'Mở 1 chiều do KH thanh toán cước' ;
-    dataLS.XMD := 'Mở 1 chiều do đã xác minh được địa chỉ thuê bao' ;
-    dataLS.128K := 'Đổi sim qua sim dung lượng 128K' ;
-    dataLS.CA64 := 'Đổi sim qua sim dung lượng 64K' ;
-    dataLS.DSMP := 'Đổi sim miễn phí' ;
-    dataLS.CCQ := 'Thuê bao được đấu mới do CCQ và chủ cũ đã thanh toán hết cước / Chặn 2 chiều do chuyển chủ quyền / Cắt hủy/ cắt hẳn MobiGold để chuyển chủ quyền và chủ cũ đã thanh toán hết cước' ;
-    dataLS.CQC := 'Thuê bao được đấu mới do chuyển chủ quyền và KH mới đồng ý thanh toán cước của chủ cũ' ;
-    dataLS.ANNI := 'Chặn 1 chiều / 2 chiều do yêu cầu từ Bộ Công An' ;
-    dataLS.CA1 := 'Chặn 2 chiều do mất máy / Chặn 1 chiều do mất máy' ;
-    dataLS.CA4 := 'Chặn 2 chiều do mất sim / Chặn 1 chiều do mất sim' ;
-    dataLS.DEBT := 'Chặn 1 chiều / Chặn 2 chiều do nợ cước' ;
-    dataLS.KHD := 'Chặn 1 chiều do không dùng/Chặn 2 chiều do KH yêu cầu tạm khóa' ;
-    dataLS.KHDC := 'Chặn 1 chiều / Chặn 2 chiều do địa chỉ không có thực, giả mạo hồ sơ' ;
-    dataLS.KNAI := 'Chặn 1 / 2 chiều do khách hàng khiếu nại' ;
-    dataLS.KVMS := 'Tạm khóa 2 chiều - VMS' ;
-    dataLS.KXD := 'Chặn 1 / 2 chiều do không xác minh được thông tin thuê bao' ;
-    dataLS.QROI := 'Chặn 1 / 2 chiều do thuê bao quấy rối' ;
-    dataLS.THLY := 'Chặn 2 chiều do khách hàng yêu cầu thanh lý hợp đồng' ;
-    dataLS.XMB := 'Chặn 1 / 2 chiều do khách hàng cung cấp sai địa chỉ' ;
-    dataLS.BADO := 'Chặn 1 chiều do TB sử dụng vượt quá mức cước ứng trước, báo đỏ' ;
-    dataLS.HSO := 'Chặn 1 chiều do không có hồ sơ' ;
-    dataLS.OTH := 'Chặn 1 chiều do các lý do khác' ;
-    dataLS.CSKS := 'Chặn 1 chiều do nghi ngờ sim kích hoạt sẵn' ;
-    dataLS.3FON := 'Mobi365 chuyển sang MobiGold: không còn tiền' ;
-    dataLS.CA05 := 'Cắt hủy/ cắt hẳn MobiGold trong vòng 5 ngày tính từ ngày hòa mạng (đã bỏ nghiệp vụ này)' ;
-    dataLS.CA2 := 'Cắt hủy/ cắt hẳn MobiGold do sóng yếu' ;
-    dataLS.CA3 := 'Cắt hủy/ cắt hẳn MobiGold do KH hủy số không sử dụng; Cắt hủy/ cắt hẳn trả trước do KH hủy số không sử dụng' ;
-    dataLS.CCNV := 'Cắt hủy/ cắt hẳn MobiGold để chuyển sang thuê bao nghiệp vụ' ;
-    dataLS.CCVU := 'Cắt hủy/ cắt hẳn MobiGold để chuyển sang thuê bao công vụ' ;
-    dataLS.CMCV := 'Chuyển máy công vụ' ;
-    dataLS.CNV := 'Cắt hủy/ cắt hẳn MobiGold nghiệp vụ' ;
-    dataLS.CTHU := 'Cắt hủy/ cắt hẳn MobiGold thuộc sim thử' ;
-    dataLS.DEAC := 'Chặn 2 chiều do hết hạn nghe / Thuê bao trả trước bị cắt hủy/ delete do bị khóa 2 chiều quá hạn (hiện nay là 31 ngày)' ;
-    dataLS.DPFC := 'Cắt hủy/ cắt hẳn MobiGold để chuyển sang Fast Connect trả trước' ;
-    dataLS.FONS := 'Cắt hủy/ cắt hẳn MobiGold vì KH chuyển sang SFONE' ;
-    dataLS.FONV := 'Cắt hủy/ cắt hẳn MobiGold vì KH chuyển sang Viettel' ;
-    dataLS.GOZO := 'Cắt hủy/ cắt hẳn MobiGold để chuyển sang MobiZone' ;
-    dataLS.HOSO := 'Cắt hủy/ cắt hẳn MobiGold do không có hồ sơ' ;
-    dataLS.KKH := 'MobiGold chuyển sang MobiCard, không kích hoạt' ;
-    dataLS.M365 := 'Mobi365 chuyển sang MobiGold' ;
-    dataLS.MEZ := 'Cắt hủy/ cắt hẳn MobiGold để chuyển sang MobiEZ' ;
-    dataLS.MF4U := 'Cắt hủy/ cắt hẳn MobiGold để chuyển sang Mobi4U' ;
-    dataLS.MFQT := 'Cắt hủy/ cắt hẳn MobiGold để chuyển sang Q-Teen' ;
-    dataLS.MFSV := 'Cắt hủy/ cắt hẳn MobiGold để chuyển sang Q-Student' ;
-    dataLS.MGM3 := 'Cắt hủy/ cắt hẳn MobiGold để chuyển sang Mobi365' ;
-    dataLS.MGMQ := 'Cắt hủy/ cắt hẳn MobiGold để chuyển sang MobiQ' ;
-    dataLS.MOBI := 'Cắt hủy/ cắt hẳn MobiGold để chuyển sang MobiCard' ;
-    dataLS.NO2T := 'Cắt hủy/ cắt hẳn MobiGold do nợ cước quá' ;
-    dataLS.QFKK := 'Cắt MobiQ để chuyển sang MobiGold' ;
-    dataLS.SAIS := 'Cắt hủy/ cắt hẳn MobiGold do CH/ ĐLC đấu nối số sai qui định' ;
-    dataLS.TK6T := 'Cắt hủy/ cắt hẳn MobiGold do thuê bao khóa 2 chiều quá 6 tháng (hiện nay là quá 31 ngày)' ;
-    dataLS.VINA := 'Cắt hủy/ cắt hẳn MobiGold vì KH chuyển sang ViNaPhone' ;
-    dataLS.DNTD := 'Đấu số trả trước mới (số mới - đấu nối tự động)' ;
-    dataLS.DNFC := 'Đấu số MobiCard mới (do chuyển từ MobiGold sang)' ;
-    dataLS.DNGQ := 'Đấu số MobiQ mới (do chuyển từ MobiGold sang)' ;
-    dataLS.GLZO := 'MobiGold qua MobiZone' ;
-    dataLS.FQTE := 'Chuyển MobiGold sang Q_TEEN' ;
-    dataLS.DNQT := 'Chuyển MobiGold sang Mobi Qteen' ;
-    dataLS.DNG3 := 'Chuyển MobiGold sang Mobi365' ;
-    dataLS.DNFU := 'Chuyển MobiGold sang Mobi4U' ;
-    dataLS.DNFSV := 'Chuyển MobiGold sang MobiQ_SV' ;
-    dataLS.DN2S := 'Đấu nối Sim 2 số' ;
-    dataLS.DNGD := 'Đấu nối hay khôi phục theo giấy duyệt' ;
-    dataLS.DOIS := 'Đối soát' ;
-    dataLS.HUY := 'Đấu F1 sửa sai TDN' ;
-    dataLS.KP := 'Khôi phục số đã hủy' ;
-    dataLS.VMS := 'Đấu mới' ;
-    dataLS.STH := 'Sim Thu TT' ;
-    dataLS.DNST := 'Đấu nối sim thử' ;
-    dataLS.DBO := 'Thay đổi giữa các hình thức trả trước (do KH tự chuyển - bấm Note để xem chi tiết)' ;
-    dataLS.QSV := 'Chuyển từ trả trước khác sang Q-SV' ;
-    dataLS.QTE := 'Chuyển từ trả trước khác sang Q-Teen' ;
-    dataLS.INAC := 'Chặn 1 chiều do hết hạn sử dụng (Mobi4U là do hết tiền)' ;
-    dataLS.ACTI := 'Mở 2 chiều do nạp tiền / Kích hoạt số trả trước mới' ;
-    dataLS.RES := 'Chặn 1 chiều do hết tiền (nhưng còn ngày sử dụng)' ;
-    dataLS.CA7 := 'Hủy sim 2 số, thanh lý 1 số' ;
-    dataLS.CKCVB := 'Chặn không chính chủ vùng biên, DTV xác minh ghi nhận code 19.19. Không xác minh được thì mời đến CHC' ;
-    dataLS.SVBG := 'Spamcall-SVBG: ĐTV mời KH ra cửa hàng xác thực thông tin và làm cam kết để mở lại'
+    serviceHistory := Map()
+    serviceHistory.3GKK := "MobiGold hòa mạng mới (do Mobi365 chuyển sang) / Mobi365 chuyển sang MobiGold: có chuyển tiền"
+    serviceHistory.CFKK := "MobiGold hòa mạng mới (do MobiCard chuyển sang) / Cắt MobiCard để chuyển sang MobiGold"
+    serviceHistory.MCVU := "MobiGold số công vụ hòa mạng mới (số mới)"
+    serviceHistory.MS := "MobiGold hòa mạng mới (số mới)"
+    serviceHistory.QFON := "MobiGold hòa mạng mới (do MobiQ chuyển sang)"
+    serviceHistory.QTEF := "MobiGold hòa mạng mới (do Q-Teen chuyển sang) / Q-Teen chuyển sang MobiGold"
+    serviceHistory.SVFKK := "MobiGold hòa mạng mới (do Q-Student chuyển sang) / Q-Student chuyển sang MobiGold"
+    serviceHistory.UFKK := "MobiGold hòa mạng mới (do Mobi4U chuyển sang) / Mobi4U chuyển sang MobiGold"
+    serviceHistory.ZFKK := "MobiGold hòa mạng mới (do MobiZone chuyển sang) / MobiZone chuyển sang MobiGold: Còn tiền"
+    serviceHistory.CHS := "Thay đổi thông tin do thông tin trước đó CH/ ĐLC cập nhật bị sai / Chặn 2 chiều do cửa hàng sau"
+    serviceHistory.DTEN := "- Đổi tên cá nhân := cập nhật thêm tên cá nhân sau tên doanh nghiệp- Đổi tên doanh nghiệp := do doanh nghiệp đổi tên"
+    serviceHistory.KHYC := "Thay đổi dịch vụ do KHYC / Thay sim / Thay đổi giữa các hình thức trả trước KH tự chuyển / Chặn 2 chiều do khách hàng yêu cầu"
+    serviceHistory.NTNC := "Nhắn tin thông báo cước"
+    serviceHistory.NTTB := "Nhắn tin nhắc cước hay nhắn nội dung khác"
+    serviceHistory.WARN := "Nhắn tin nhắc cước hay nhắn tin báo đỏ"
+    serviceHistory.PAID := "Mở 1 chiều do KH thanh toán cước"
+    serviceHistory.XMD := "Mở 1 chiều do đã xác minh được địa chỉ thuê bao"
+    serviceHistory.128K := "Đổi sim qua sim dung lượng 128K"
+    serviceHistory.CA64 := "Đổi sim qua sim dung lượng 64K"
+    serviceHistory.DSMP := "Đổi sim miễn phí"
+    serviceHistory.CCQ := "Thuê bao được đấu mới do CCQ và chủ cũ đã thanh toán hết cước / Chặn 2 chiều do chuyển chủ quyền / Cắt hủy/ cắt hẳn MobiGold để chuyển chủ quyền và chủ cũ đã thanh toán hết cước"
+    serviceHistory.CQC := "Thuê bao được đấu mới do chuyển chủ quyền và KH mới đồng ý thanh toán cước của chủ cũ"
+    serviceHistory.ANNI := "Chặn 1 chiều / 2 chiều do yêu cầu từ Bộ Công An"
+    serviceHistory.CA1 := "Chặn 2 chiều do mất máy / Chặn 1 chiều do mất máy"
+    serviceHistory.CA4 := "Chặn 2 chiều do mất sim / Chặn 1 chiều do mất sim"
+    serviceHistory.DEBT := "Chặn 1 chiều / Chặn 2 chiều do nợ cước"
+    serviceHistory.KHD := "Chặn 1 chiều do không dùng/Chặn 2 chiều do KH yêu cầu tạm khóa"
+    serviceHistory.KHDC := "Chặn 1 chiều / Chặn 2 chiều do địa chỉ không có thực, giả mạo hồ sơ"
+    serviceHistory.KNAI := "Chặn 1 / 2 chiều do khách hàng khiếu nại"
+    serviceHistory.KVMS := "Tạm khóa 2 chiều - VMS"
+    serviceHistory.KXD := "Chặn 1 / 2 chiều do không xác minh được thông tin thuê bao"
+    serviceHistory.QROI := "Chặn 1 / 2 chiều do thuê bao quấy rối"
+    serviceHistory.THLY := "Chặn 2 chiều do khách hàng yêu cầu thanh lý hợp đồng"
+    serviceHistory.XMB := "Chặn 1 / 2 chiều do khách hàng cung cấp sai địa chỉ"
+    serviceHistory.BADO := "Chặn 1 chiều do TB sử dụng vượt quá mức cước ứng trước, báo đỏ"
+    serviceHistory.HSO := "Chặn 1 chiều do không có hồ sơ"
+    serviceHistory.OTH := "Chặn 1 chiều do các lý do khác"
+    serviceHistory.CSKS := "Chặn 1 chiều do nghi ngờ sim kích hoạt sẵn"
+    serviceHistory.3FON := "Mobi365 chuyển sang MobiGold: không còn tiền"
+    serviceHistory.CA05 := "Cắt hủy/ cắt hẳn MobiGold trong vòng 5 ngày tính từ ngày hòa mạng (đã bỏ nghiệp vụ này)"
+    serviceHistory.CA2 := "Cắt hủy/ cắt hẳn MobiGold do sóng yếu"
+    serviceHistory.CA3 := "Cắt hủy/ cắt hẳn MobiGold do KH hủy số không sử dụng; Cắt hủy/ cắt hẳn trả trước do KH hủy số không sử dụng"
+    serviceHistory.CCNV := "Cắt hủy/ cắt hẳn MobiGold để chuyển sang thuê bao nghiệp vụ"
+    serviceHistory.CCVU := "Cắt hủy/ cắt hẳn MobiGold để chuyển sang thuê bao công vụ"
+    serviceHistory.CMCV := "Chuyển máy công vụ"
+    serviceHistory.CNV := "Cắt hủy/ cắt hẳn MobiGold nghiệp vụ"
+    serviceHistory.CTHU := "Cắt hủy/ cắt hẳn MobiGold thuộc sim thử"
+    serviceHistory.DEAC := "Chặn 2 chiều do hết hạn nghe / Thuê bao trả trước bị cắt hủy/ delete do bị khóa 2 chiều quá hạn (hiện nay là 31 ngày)"
+    serviceHistory.DPFC := "Cắt hủy/ cắt hẳn MobiGold để chuyển sang Fast Connect trả trước"
+    serviceHistory.FONS := "Cắt hủy/ cắt hẳn MobiGold vì KH chuyển sang SFONE"
+    serviceHistory.FONV := "Cắt hủy/ cắt hẳn MobiGold vì KH chuyển sang Viettel"
+    serviceHistory.GOZO := "Cắt hủy/ cắt hẳn MobiGold để chuyển sang MobiZone"
+    serviceHistory.HOSO := "Cắt hủy/ cắt hẳn MobiGold do không có hồ sơ"
+    serviceHistory.KKH := "MobiGold chuyển sang MobiCard, không kích hoạt"
+    serviceHistory.M365 := "Mobi365 chuyển sang MobiGold"
+    serviceHistory.MEZ := "Cắt hủy/ cắt hẳn MobiGold để chuyển sang MobiEZ"
+    serviceHistory.MF4U := "Cắt hủy/ cắt hẳn MobiGold để chuyển sang Mobi4U"
+    serviceHistory.MFQT := "Cắt hủy/ cắt hẳn MobiGold để chuyển sang Q-Teen"
+    serviceHistory.MFSV := "Cắt hủy/ cắt hẳn MobiGold để chuyển sang Q-Student"
+    serviceHistory.MGM3 := "Cắt hủy/ cắt hẳn MobiGold để chuyển sang Mobi365"
+    serviceHistory.MGMQ := "Cắt hủy/ cắt hẳn MobiGold để chuyển sang MobiQ"
+    serviceHistory.MOBI := "Cắt hủy/ cắt hẳn MobiGold để chuyển sang MobiCard"
+    serviceHistory.NO2T := "Cắt hủy/ cắt hẳn MobiGold do nợ cước quá"
+    serviceHistory.QFKK := "Cắt MobiQ để chuyển sang MobiGold"
+    serviceHistory.SAIS := "Cắt hủy/ cắt hẳn MobiGold do CH/ ĐLC đấu nối số sai qui định"
+    serviceHistory.TK6T := "Cắt hủy/ cắt hẳn MobiGold do thuê bao khóa 2 chiều quá 6 tháng (hiện nay là quá 31 ngày)"
+    serviceHistory.VINA := "Cắt hủy/ cắt hẳn MobiGold vì KH chuyển sang ViNaPhone"
+    serviceHistory.DNTD := "Đấu số trả trước mới (số mới - đấu nối tự động)"
+    serviceHistory.DNFC := "Đấu số MobiCard mới (do chuyển từ MobiGold sang)"
+    serviceHistory.DNGQ := "Đấu số MobiQ mới (do chuyển từ MobiGold sang)"
+    serviceHistory.GLZO := "MobiGold qua MobiZone"
+    serviceHistory.FQTE := "Chuyển MobiGold sang Q_TEEN"
+    serviceHistory.DNQT := "Chuyển MobiGold sang Mobi Qteen"
+    serviceHistory.DNG3 := "Chuyển MobiGold sang Mobi365"
+    serviceHistory.DNFU := "Chuyển MobiGold sang Mobi4U"
+    serviceHistory.DNFSV := "Chuyển MobiGold sang MobiQ_SV"
+    serviceHistory.DN2S := "Đấu nối Sim 2 số"
+    serviceHistory.DNGD := "Đấu nối hay khôi phục theo giấy duyệt"
+    serviceHistory.DOIS := "Đối soát"
+    serviceHistory.HUY := "Đấu F1 sửa sai TDN"
+    serviceHistory.KP := "Khôi phục số đã hủy"
+    serviceHistory.VMS := "Đấu mới"
+    serviceHistory.STH := "Sim Thu TT"
+    serviceHistory.DNST := "Đấu nối sim thử"
+    serviceHistory.DBO := "Thay đổi giữa các hình thức trả trước (do KH tự chuyển - bấm Note để xem chi tiết)"
+    serviceHistory.QSV := "Chuyển từ trả trước khác sang Q-SV"
+    serviceHistory.QTE := "Chuyển từ trả trước khác sang Q-Teen"
+    serviceHistory.INAC := "Chặn 1 chiều do hết hạn sử dụng (Mobi4U là do hết tiền)"
+    serviceHistory.ACTI := "Mở 2 chiều do nạp tiền / Kích hoạt số trả trước mới"
+    serviceHistory.RES := "Chặn 1 chiều do hết tiền (nhưng còn ngày sử dụng)"
+    serviceHistory.CA7 := "Hủy sim 2 số, thanh lý 1 số"
+    serviceHistory.CKCVB := "Chặn không chính chủ vùng biên, DTV xác minh ghi nhận code 19.19. Không xác minh được thì mời đến CHC"
+    serviceHistory.SVBG := "Spamcall-SVBG: ĐTV mời KH ra cửa hàng xác thực thông tin và làm cam kết để mở lại"
 
     oldClipboard := A_Clipboard
     Send "^c"
     Sleep 500
-    newClipboard := A_Clipboard
-    key := Trim(newClipboard)
+    selectedKey := Trim(A_Clipboard)
     A_Clipboard := oldClipboard
-    MsgBox loopkup(dataLS, key)
+    MsgBox loopkup(serviceHistory, selectedKey)
 }
 
 ; * Send key F1, F2, F3, F4 to the active window
