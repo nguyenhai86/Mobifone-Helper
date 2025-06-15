@@ -516,7 +516,7 @@ ShowLoanInfoByCodeOrCompletionCode(loanCodes, inputValue) {
 
     ; Search by completion code
     for code, info in loanCodes {
-        if (info.HasOwnProp("Mã hoàn ứng") && (info["Mã hoàn ứng"] = inputValue))
+        if (info.Get("Mã hoàn ứng") = inputValue)
             return FormatLoanInfo(code, info)
     }
     return "Không tìm thấy thông tin cho: " inputValue
@@ -532,7 +532,7 @@ FormatLoanInfo(code, info) {
 
 ^+u:: {
     data := LoadMobifoneData()
-    loanCodes := data.loanCodes
+    loanCodes := data.Get("loanCodes")
     inputValue := GetSelectedText()
     MsgBox ShowLoanInfoByCodeOrCompletionCode(loanCodes, inputValue)
 }
