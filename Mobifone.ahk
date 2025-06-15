@@ -362,12 +362,9 @@ FormatAdvanceInfo(code, info) {
         "1255", Map("Thời gian", "", "Tài khoản", "TK_AP2: Thoại/SMS nội mạng, liên mạng.", "Kiểm tra nợ", "", "ĐK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "UAGHU"),
         "5110", Map("Thời gian", "", "Tài khoản", "Phút gọi", "Kiểm tra nợ", "KT", "ĐK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "HT", "Mã hoàn ứng", "SPHU")
     )
-    oldClipboard := A_Clipboard
-    Send "^c"
-    Sleep 500
-    clipboardValue := Trim(A_Clipboard)
-    A_Clipboard := oldClipboard
-    MsgBox ShowAdvanceInfoByCodeOrCompletionCode(advanceCodes, clipboardValue)
+
+    inputValue := GetSelectedText()
+    MsgBox ShowAdvanceInfoByCodeOrCompletionCode(advanceCodes, inputValue)
 }
 
 ;* Tra cứu gói được CVTN (Chuyển vùng trong nước) và GHLH (Gia hạn linh hoạt)
@@ -471,12 +468,11 @@ FormatAdvanceInfo(code, info) {
 
 ;* Chuyen doi giay sang gio, phut
 ^+j:: {
-    oldClipboard := A_Clipboard
-    Send "^c"
-    Sleep 500
-    seconds := A_Clipboard
-    seconds := Trim(seconds)
-    A_Clipboard := oldClipboard
+    seconds := GetSelectedText()
+    if !IsInteger(seconds) {
+        MsgBox "Vui lòng chọn một số giây hợp lệ."
+        return
+    }
 
     hours := Floor(seconds / 3600)
     minutes := Floor(Mod(seconds, 3600) / 60)
@@ -486,12 +482,11 @@ FormatAdvanceInfo(code, info) {
 
 ;* Chuyen doi KB sang MB, GB
 ^+k:: {
-    oldClipboard := A_Clipboard
-    Send "^c"
-    Sleep 500
-    kb := A_Clipboard
-    kb := Trim(kb)
-    A_Clipboard := oldClipboard
+    kb := GetSelectedText()
+    if !IsInteger(kb) {
+        MsgBox "Vui lòng chọn một số KB hợp lệ."
+        return
+    }
 
     mb := Round(kb / 1024, 2)
     gb := Round(kb / 1024 / 1024, 2)
@@ -597,12 +592,8 @@ FormatAdvanceInfo(code, info) {
     serviceHistory.CKCVB := "Chặn không chính chủ vùng biên, DTV xác minh ghi nhận code 19.19. Không xác minh được thì mời đến CHC"
     serviceHistory.SVBG := "Spamcall-SVBG: ĐTV mời KH ra cửa hàng xác thực thông tin và làm cam kết để mở lại"
 
-    oldClipboard := A_Clipboard
-    Send "^c"
-    Sleep 500
-    selectedKey := Trim(A_Clipboard)
-    A_Clipboard := oldClipboard
-    MsgBox loopkup(serviceHistory, selectedKey)
+    serviceKey := GetSelectedText()
+    MsgBox loopkup(serviceHistory, serviceKey)
 }
 
 ; * Send key F1, F2, F3, F4 to the active window
