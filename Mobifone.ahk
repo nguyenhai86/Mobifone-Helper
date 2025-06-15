@@ -1,6 +1,22 @@
 ﻿#requires AutoHotkey v2.0
 #SingleInstance force
 
+; ------------------------
+; json
+; ------------------------
+#Include jsongo.ahk
+LoadMobifoneData() {
+    try {
+        fileContent := FileRead("mobifone_data.json", "UTF-8")
+        data := jsongo.Parse(fileContent)
+        return data
+    } catch Error as e {
+        MsgBox "Error loading mobifone_data.json: " e.Message
+        return Map()
+    }
+}
+
+
 ;-------------------------
 ; Helpers functions
 ;-------------------------
@@ -335,15 +351,17 @@ loopkup(value, key) {
 }
 ;* Tổng đài ứng tiền
 ShowLoanInfoByCodeOrCompletionCode(loanCodes, inputValue) {
-    if (loanCodes.Has(inputValue))
+    if (loanCodes.HasOwnProp(inputValue))
         return FormatLoanInfo(inputValue, loanCodes[inputValue])
 
+    ; Search by completion code
     for code, info in loanCodes {
-        if (info.Has("Mã hoàn ứng") && (info["Mã hoàn ứng"] = inputValue))
+        if (info.HasOwnProp("Mã hoàn ứng") && (info["Mã hoàn ứng"] = inputValue))
             return FormatLoanInfo(code, info)
     }
     return "Không tìm thấy thông tin cho: " inputValue
 }
+
 FormatLoanInfo(code, info) {
     infoText := "Mã dịch vụ: " code "`n"
     for field, value in info {
@@ -351,87 +369,19 @@ FormatLoanInfo(code, info) {
     }
     return infoText
 }
+
 ^+u:: {
-    loanCodes := Map(
-        "9015", Map("Thời gian", "chờ 24h", "Tài khoản", "TKC", "Kiểm tra nợ", "KT", "ĐK ứng tự động", "UDT/SUBS", "Hủy ứng tự động", "HUY UTD", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "HU"),
-        "9913", Map("Thời gian", "", "Tài khoản", "TK_AP1: - Thoại/SMS nội mạng, liên mạng.", "Kiểm tra nợ", "", "ĐK ứng tự động", "TD", "Hủy ứng tự động", "HUY TD", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "UACHU"),
-        "9928", Map("Thời gian", "", "Tài khoản", "Phút gọi", "Kiểm tra nợ", "TT", "ĐK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "HT", "Mã hoàn ứng", "MBHU"),
-        "9363", Map("Thời gian", "", "Tài khoản", "KM3: Thoại/SMS nội mạng, liên mạng / DT20", "Kiểm tra nợ", "KT", "ĐK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "MBFHU"),
-        "9070", Map("Thời gian", "24h", "Tài khoản", "Data", "Kiểm tra nợ", "KT", "ĐK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "TT", "Mã hoàn ứng", "DT247HU"),
-        "1256", Map("Thời gian", "7 ngày", "Tài khoản", "TKC", "Kiểm tra nợ", "KT", "ĐK ứng tự động", "UDT", "Hủy ứng tự động", "HUY", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "EHU"),
-        "1255", Map("Thời gian", "", "Tài khoản", "TK_AP2: Thoại/SMS nội mạng, liên mạng.", "Kiểm tra nợ", "", "ĐK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "UAGHU"),
-        "5110", Map("Thời gian", "", "Tài khoản", "Phút gọi", "Kiểm tra nợ", "KT", "ĐK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "HT", "Mã hoàn ứng", "SPHU")
-    )
+    data := LoadMobifoneData()
+    loanCodes := data.loanCodes
     inputValue := GetSelectedText()
     MsgBox ShowLoanInfoByCodeOrCompletionCode(loanCodes, inputValue)
 }
 
 ;* Tra cứu gói được CVTN (Chuyển vùng trong nước) và GHLH (Gia hạn linh hoạt)
 ^+g:: {
-    eligibleCVTN := [
-        "3MXH90", "6MXH90", "12MXH90", "3MXH100", "6MXH100", "12MXH100", "3MXH120", "6MXH120", "12MXH120", "3MXH150", "6MXH150", "12MXH150", "3MF159", "6MF159", "12MF159", "3KC120", "6KC120", "12KC120", "3KC150", "6KC150", "12KC150", "3NA70", "6NA70", "12NA70", "3NA90", "6NA90", "12NA90", "3NA120", "6NA120", "12NA120", "3S135", "6S135", "12S135", "3S159", "6S159", "12S159", "3MW90", "6MW90", "12MW90", "3MWG110", "6MWG110", "12MWG110", "3MWG125", "6MWG125", "12MWG125", "3MWG135", "6MWG135", "12MWG135", "3MWG155", "6MWG155", "12MWG155", "3MGX90", "6MGX90", "12MGX90", "3MGX110", "6MGX110", "12MGX110", "3MGX125", "6MGX125", "12MGX125", "3MAX90", "6MAX90", "12MAX90", "3V90", "6V90", "12V90", "3GX159", "6GX159", "12GX159", "3GX139", "6GX139", "12GX139", "MXH90", "MXH100", "MXH120", "MXH150", "MF159", "KC120", "KC150", "NA70", "NA90", "NA120", "S135", "S159", "MW90", "MWG110", "MWG125", "MWG135", "MWG155", "MGX90", "MGX110", "MGX125", "MAX90", "V90", "GX159", "GX139", "C120K", "12C120K", "MF219", "MF329", "3MF219", "6MF219", "12MF219", "3MF329", "6MF329", "12MF329", "3E300", "6E300", "12E300", "5GV", "5GC", "5GLQ", "3E500", "6E1000", "12E1000", "VZ100", "12VZ100", "VZ135", "12VZ135", "C90N", "3C90N", "6C90N", "12C90N", "3TK135", "6TK135", "12TK135", "TK135", "KC90", "3KC90", "6KC90", "12KC90", "3TK159", "6TK159", "12TK159", "TK159", "3PT90", "6PT90", "12PT90", "PT90"
-    ]
-
-    flexibleRenewalFee := Map()
-    flexibleRenewalFee.KC90 := "12.000 đ"
-    flexibleRenewalFee.TK135 := "4.500 đ"
-    flexibleRenewalFee.C120 := "20.000 đ"
-    flexibleRenewalFee.C90 := "12.000 đ"
-    flexibleRenewalFee.C90N := "12.000 đ"
-    flexibleRenewalFee.KC120 := "16.000 đ"
-    flexibleRenewalFee.KC150 := "25.000 đ"
-    flexibleRenewalFee.PT120 := "10.000 đ"
-    flexibleRenewalFee.PT70 := "2.500 đ"
-    flexibleRenewalFee.PT90 := "3.000 đ"
-    flexibleRenewalFee.C120N := "16.000 đ"
-    flexibleRenewalFee.C120K := "28.000 đ"
-    flexibleRenewalFee.C120T := "28.000 đ"
-    flexibleRenewalFee.TK159 := "21.200 đ"
-    flexibleRenewalFee.TK219 := "29.200 đ"
-    flexibleRenewalFee.MXH80 := "6.000 đ"
-    flexibleRenewalFee.MXH90 := "6.000 đ"
-    flexibleRenewalFee.MXH100 := "7.000 đ"
-    flexibleRenewalFee.MXH120 := "20.000 đ"
-    flexibleRenewalFee.MXH150 := "30.000 đ"
-    flexibleRenewalFee.C50N := "40.000 đ"
-    flexibleRenewalFee.FD60 := "2.000 đ"
-    flexibleRenewalFee.21G := "4.000 đ"
-    flexibleRenewalFee.24G := "6.600 đ"
-    flexibleRenewalFee.12C120 := "120.000 đ"
-    flexibleRenewalFee.12C90N := "90.000 đ"
-    flexibleRenewalFee.12C50N := "50.000 đ"
-    flexibleRenewalFee.12KC150 := "150.000 đ"
-    flexibleRenewalFee.12KC120 := "120.000 đ"
-    flexibleRenewalFee.12KC90 := "90.000 đ"
-    flexibleRenewalFee.12PT120 := "120.000 đ"
-    flexibleRenewalFee.12PT90 := "90.000 đ"
-    flexibleRenewalFee.12PT70 := "70.000 đ"
-    flexibleRenewalFee.12MXH150 := "150.000 đ"
-    flexibleRenewalFee.12MXH120 := "120.000 đ"
-    flexibleRenewalFee.12MXH100 := "100.000 đ"
-    flexibleRenewalFee.12MXH90 := "90.000 đ"
-    flexibleRenewalFee.12MXH80 := "80.000 đ"
-    flexibleRenewalFee.12TK219 := "219.000 đ"
-    flexibleRenewalFee.12TK159 := "159.000 đ"
-    flexibleRenewalFee.12TK135 := "135.000 đ"
-    flexibleRenewalFee.NA70 := "7.000 đ"
-    flexibleRenewalFee.NA90 := "6.000 đ"
-    flexibleRenewalFee.NA120 := "6.000 đ"
-    flexibleRenewalFee.MBF30 := "10.000 đ"
-    flexibleRenewalFee.EDU100 := "10.000 đ"
-    flexibleRenewalFee.ME100 := "10.000 đ"
-    flexibleRenewalFee.AG90 := "5.000 đ"
-    flexibleRenewalFee.AG100 := "10.000 đ"
-    flexibleRenewalFee.GG135 := "5.000 đ"
-    flexibleRenewalFee.GG155 := "35.000 đ"
-    flexibleRenewalFee.MCL200 := "5.000 đ"
-    flexibleRenewalFee.MCD85 := "5.000 đ"
-    flexibleRenewalFee.MCD100 := "10.000 đ"
-    flexibleRenewalFee.S135 := "5.000 đ"
-    flexibleRenewalFee.S159 := "10.000 đ"
-    flexibleRenewalFee.MCD145 := "5.000 đ"
-    flexibleRenewalFee.MC150 := "10.000 đ"
-    flexibleRenewalFee.MFC165 := "5.000 đ"
+    data := LoadMobifoneData()
+    eligibleCVTN := data.Get("eligibleCVTN")
+    flexibleRenewalFee := data.Get("flexibleRenewalFee")
 
     packageName := GetSelectedText()
     if !RegExMatch(packageName, "^[a-zA-Z0-9]+$") {
@@ -439,30 +389,51 @@ FormatLoanInfo(code, info) {
         return
     }
 
+    ; Check CVTN eligibility
     isCVTN := false
-    for _, pkg in eligibleCVTN {
+    for pkg in eligibleCVTN {
         if (pkg = packageName) {
             isCVTN := true
             break
         }
     }
-    renewalFee := loopkup(flexibleRenewalFee, packageName)
 
+    ; Check GHLH fee
+    try {
+        hasGHLH := flexibleRenewalFee.Get(packageName)
+    }
+    catch {
+        hasGHLH := false
+    }
+
+    ; Show results
     guiTitle := "Kiểm tra CVTN và GHLH"
-    guiLine := "-------------------------------------------------------------------------"
-    gui := Gui(, guiTitle)
-    gui.Add("Text", "x10 y20 cRed", Format("Gói cước hiện tại: '{1}'", packageName))
-    gui.Add("Text", "xm", guiLine)
-    gui.Add("Text", "x10 y60 cBlue", "CVTN:")
-    gui.Add("Text", "xm", guiLine)
-    gui.Add("Text", "x10 y100 cBlue", "GHLH:")
-    gui.Add("Text", "x10 y120 cBlue", "")
+    MyGui := Gui(, guiTitle)
+    MyGui.SetFont("s10")
 
-    gui.Add("Text", "x100 y60 cBlack", isCVTN ? "TRUE" : "FALSE")
-    gui.Add("Text", "x100 y100 cBlack", renewalFee != "Key not found" ? renewalFee : "Không hỗ trợ")
+    ; Add package name with larger font
+    MyGui.SetFont("s12 bold")
+    MyGui.Add("Text", "x10 y20", packageName)
+    MyGui.Add("Text", "x10 y50", "────────────────────────────")
 
-    gui.OnEvent("Escape", (*) => WinClose(guiTitle))
-    gui.Show()
+    ; Package info section
+    MyGui.SetFont("s10 bold")
+
+    ; CVTN status
+    MyGui.Add("Text", "x10 y80", "Chuyển vùng trong nước:")
+    MyGui.Add("Text", "x220 y80 " (isCVTN ? "cGreen" : "cRed"),
+        isCVTN ? "✓ Được phép" : "✗ Không được phép")
+
+    ; GHLH status
+    MyGui.Add("Text", "x10 y120", "Gia hạn linh hoạt:")
+    MyGui.Add("Text", "x220 y120 " (hasGHLH ? "cGreen" : "cRed"),
+        hasGHLH ? Format("✓ {1}", hasGHLH) : "✗ Không hỗ trợ")
+    MyGui.Add("Text", "x10 y135", " ")
+    MyGui.OnEvent("Escape", MyGui_Escape)
+    MyGui_Escape(thisGui) {
+        WinClose guiTitle
+    }
+    MyGui.Show("")
 }
 
 ;* Chuyen doi giay sang gio, phut
