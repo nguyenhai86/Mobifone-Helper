@@ -334,17 +334,17 @@ loopkup(value, key) {
     }
 }
 ;* Tổng đài ứng tiền
-ShowAdvanceInfoByCodeOrCompletionCode(advanceCodes, inputValue) {
-    if (advanceCodes.Has(inputValue))
-        return FormatAdvanceInfo(inputValue, advanceCodes[inputValue])
+ShowLoanInfoByCodeOrCompletionCode(loanCodes, inputValue) {
+    if (loanCodes.Has(inputValue))
+        return FormatLoanInfo(inputValue, loanCodes[inputValue])
 
-    for code, info in advanceCodes {
+    for code, info in loanCodes {
         if (info.Has("Mã hoàn ứng") && (info["Mã hoàn ứng"] = inputValue))
-            return FormatAdvanceInfo(code, info)
+            return FormatLoanInfo(code, info)
     }
     return "Không tìm thấy thông tin cho: " inputValue
 }
-FormatAdvanceInfo(code, info) {
+FormatLoanInfo(code, info) {
     infoText := "Mã dịch vụ: " code "`n"
     for field, value in info {
         infoText .= field ": " value "`n"
@@ -352,7 +352,7 @@ FormatAdvanceInfo(code, info) {
     return infoText
 }
 ^+u:: {
-    advanceCodes := Map(
+    loanCodes := Map(
         "9015", Map("Thời gian", "chờ 24h", "Tài khoản", "TKC", "Kiểm tra nợ", "KT", "ĐK ứng tự động", "UDT/SUBS", "Hủy ứng tự động", "HUY UTD", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "HU"),
         "9913", Map("Thời gian", "", "Tài khoản", "TK_AP1: - Thoại/SMS nội mạng, liên mạng.", "Kiểm tra nợ", "", "ĐK ứng tự động", "TD", "Hủy ứng tự động", "HUY TD", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "UACHU"),
         "9928", Map("Thời gian", "", "Tài khoản", "Phút gọi", "Kiểm tra nợ", "TT", "ĐK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "HT", "Mã hoàn ứng", "MBHU"),
@@ -362,9 +362,8 @@ FormatAdvanceInfo(code, info) {
         "1255", Map("Thời gian", "", "Tài khoản", "TK_AP2: Thoại/SMS nội mạng, liên mạng.", "Kiểm tra nợ", "", "ĐK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "", "Mã hoàn ứng", "UAGHU"),
         "5110", Map("Thời gian", "", "Tài khoản", "Phút gọi", "Kiểm tra nợ", "KT", "ĐK ứng tự động", "", "Hủy ứng tự động", "", "Từ chối", "TC", "Chủ động hoàn ứng", "HT", "Mã hoàn ứng", "SPHU")
     )
-
     inputValue := GetSelectedText()
-    MsgBox ShowAdvanceInfoByCodeOrCompletionCode(advanceCodes, inputValue)
+    MsgBox ShowLoanInfoByCodeOrCompletionCode(loanCodes, inputValue)
 }
 
 ;* Tra cứu gói được CVTN (Chuyển vùng trong nước) và GHLH (Gia hạn linh hoạt)
