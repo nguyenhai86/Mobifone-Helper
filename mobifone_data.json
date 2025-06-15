@@ -209,7 +209,7 @@
       "ĐK ứng tự động": "UDT/SUBS",
       "Hủy ứng tự động": "HUY UTD",
       "Từ chối": "TC",
-      "Chủ động hoàn ứng": "",
+      "Chủ động HT": "",
       "Mã hoàn ứng": "HU"
     },
     "9913": {
@@ -219,7 +219,7 @@
       "ĐK ứng tự động": "TD",
       "Hủy ứng tự động": "HUY TD",
       "Từ chối": "TC",
-      "Chủ động hoàn ứng": "",
+      "Chủ động HT": "",
       "Mã hoàn ứng": "UACHU"
     },
     "9928": {
@@ -229,7 +229,7 @@
       "ĐK ứng tự động": "",
       "Hủy ứng tự động": "",
       "Từ chối": "TC",
-      "Chủ động hoàn ứng": "HT",
+      "Chủ động HT": "HT",
       "Mã hoàn ứng": "MBHU"
     },
     "9363": {
@@ -239,7 +239,7 @@
       "ĐK ứng tự động": "",
       "Hủy ứng tự động": "",
       "Từ chối": "TC",
-      "Chủ động hoàn ứng": "",
+      "Chủ động HT": "",
       "Mã hoàn ứng": "MBFHU"
     },
     "9070": {
@@ -249,7 +249,7 @@
       "ĐK ứng tự động": "",
       "Hủy ứng tự động": "",
       "Từ chối": "TC",
-      "Chủ động hoàn ứng": "TT",
+      "Chủ động HT": "TT",
       "Mã hoàn ứng": "DT247HU"
     },
     "1256": {
@@ -259,7 +259,7 @@
       "ĐK ứng tự động": "UDT",
       "Hủy ứng tự động": "HUY",
       "Từ chối": "TC",
-      "Chủ động hoàn ứng": "",
+      "Chủ động HT": "",
       "Mã hoàn ứng": "EHU"
     },
     "1255": {
@@ -269,7 +269,7 @@
       "ĐK ứng tự động": "",
       "Hủy ứng tự động": "",
       "Từ chối": "TC",
-      "Chủ động hoàn ứng": "",
+      "Chủ động HT": "",
       "Mã hoàn ứng": "UAGHU"
     },
     "5110": {
@@ -279,7 +279,7 @@
       "ĐK ứng tự động": "",
       "Hủy ứng tự động": "",
       "Từ chối": "TC",
-      "Chủ động hoàn ứng": "HT",
+      "Chủ động HT": "HT",
       "Mã hoàn ứng": "SPHU"
     }
   }

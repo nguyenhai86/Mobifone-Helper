@@ -519,22 +519,95 @@ ShowLoanInfoByCodeOrCompletionCode(loanCodes, inputValue) {
         if (info.Get("Mã hoàn ứng") = inputValue)
             return FormatLoanInfo(code, info)
     }
-    return "Không tìm thấy thông tin cho: " inputValue
+    return Map("error", "Không tìm thấy thông tin cho: " inputValue)
 }
 
 FormatLoanInfo(code, info) {
-    infoText := "Mã dịch vụ: " code "`n"
+    resultMap := Map()
+    resultMap["code"] := code
     for field, value in info {
-        infoText .= field ": " value "`n"
+        resultMap[field] := value
     }
-    return infoText
+    return resultMap
 }
 
 ^+u:: {
     data := LoadMobifoneData()
     loanCodes := data.Get("loanCodes")
     inputValue := GetSelectedText()
-    MsgBox ShowLoanInfoByCodeOrCompletionCode(loanCodes, inputValue)
+    result := ShowLoanInfoByCodeOrCompletionCode(loanCodes, inputValue)
+
+    ; Create GUI with Apple-style
+    titleGUI := "Loan Service Info"
+    MyGui := Gui("+AlwaysOnTop -Caption", titleGUI)
+    MyGui.BackColor := "FFFFFF"
+
+    ; Title section with larger font
+    MyGui.SetFont("s16 bold", fontGUI)
+    MyGui.Add("Text", "x20 y20 w600 Center", "THÔNG TIN ỨNG TIỀN")
+
+    ; Main separator
+    MyGui.Add("Text", "x20 y60 w600 c808080", "────────────────────────────────────────────────────────────────────────────")
+
+    y := 90
+    if result.Has("error") {
+        ; Error message in red
+        MyGui.SetFont("s11", fontGUI)
+        MyGui.Add("Text", "x20 y" y " w600 cFF3B30", result["error"]) ; Apple red
+        height := 140
+    } else {
+        ; Service code header in blue
+        MyGui.SetFont("s11 bold", fontGUI)
+        MyGui.Add("Text", "x20 y" y " w600 c007AFF", "Mã dịch vụ: " result["code"]) ; Apple blue
+        y += 30
+
+        ; Column headers with separator
+        MyGui.Add("Text", "x20 y" y " w600", " ")
+        y += 20
+
+        ; Content rows
+        MyGui.SetFont("s10", fontGUI)
+        for field, value in result {
+            if (field != "code") {
+                ; Add field name (left column)
+                MyGui.SetFont("s10 bold", fontGUI)
+                MyGui.Add("Text", "x30 y" y + 3 " w180", field ":")
+
+                ; Add value (right column)
+                MyGui.SetFont("s10", fontGUI)
+                MyGui.Add("Text", "x220 y" y + 3 " w400", value)
+
+                ; Add subtle separator
+                MyGui.Add("Text", "x20 y" y + 20 " w600 c808080", "────────────────────────────────────────────────────────────────────────────")
+
+                y += 35
+            }
+        }
+        height := y + 20
+    }
+
+    ; Modern close button
+    closeBtn := MyGui.Add("Text", "x615 y15 w20 h20 Center c808080", "×")
+    closeBtn.SetFont("s16")
+    closeBtn.OnEvent("Click", (*) => MyGui.Destroy())
+
+    ; Window drag handler
+    OnMessage(0x201, GuiDrag)
+    GuiDrag(wParam, lParam, msg, hwnd) {
+        static init := 0
+        if (init = 0) {
+            OnMessage(0x202, GuiDrag)
+            init := 1
+        }
+        if (wParam = 1) {
+            PostMessage(0xA1, 2)
+        }
+    }
+
+    ; Show GUI with minimum width/height
+    height := Max(height, 160)
+    MyGui.OnEvent("Escape", (*) => MyGui.Destroy())
+    MyGui.Show("w600 h" height)
 }
 
 ;* Tra cứu gói được CVTN (Chuyển vùng trong nước) và GHLH (Gia hạn linh hoạt)
