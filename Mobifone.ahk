@@ -672,103 +672,65 @@ FormatLoanInfo(code, info) {
 
 ;* Tra cứu lịch sử dịch vụ
 ^+l:: {
-    serviceHistory := Map()
-    serviceHistory.3GKK := "MobiGold hòa mạng mới (do Mobi365 chuyển sang) / Mobi365 chuyển sang MobiGold: có chuyển tiền"
-    serviceHistory.CFKK := "MobiGold hòa mạng mới (do MobiCard chuyển sang) / Cắt MobiCard để chuyển sang MobiGold"
-    serviceHistory.MCVU := "MobiGold số công vụ hòa mạng mới (số mới)"
-    serviceHistory.MS := "MobiGold hòa mạng mới (số mới)"
-    serviceHistory.QFON := "MobiGold hòa mạng mới (do MobiQ chuyển sang)"
-    serviceHistory.QTEF := "MobiGold hòa mạng mới (do Q-Teen chuyển sang) / Q-Teen chuyển sang MobiGold"
-    serviceHistory.SVFKK := "MobiGold hòa mạng mới (do Q-Student chuyển sang) / Q-Student chuyển sang MobiGold"
-    serviceHistory.UFKK := "MobiGold hòa mạng mới (do Mobi4U chuyển sang) / Mobi4U chuyển sang MobiGold"
-    serviceHistory.ZFKK := "MobiGold hòa mạng mới (do MobiZone chuyển sang) / MobiZone chuyển sang MobiGold: Còn tiền"
-    serviceHistory.CHS := "Thay đổi thông tin do thông tin trước đó CH/ ĐLC cập nhật bị sai / Chặn 2 chiều do cửa hàng sau"
-    serviceHistory.DTEN := "- Đổi tên cá nhân := cập nhật thêm tên cá nhân sau tên doanh nghiệp- Đổi tên doanh nghiệp := do doanh nghiệp đổi tên"
-    serviceHistory.KHYC := "Thay đổi dịch vụ do KHYC / Thay sim / Thay đổi giữa các hình thức trả trước KH tự chuyển / Chặn 2 chiều do khách hàng yêu cầu"
-    serviceHistory.NTNC := "Nhắn tin thông báo cước"
-    serviceHistory.NTTB := "Nhắn tin nhắc cước hay nhắn nội dung khác"
-    serviceHistory.WARN := "Nhắn tin nhắc cước hay nhắn tin báo đỏ"
-    serviceHistory.PAID := "Mở 1 chiều do KH thanh toán cước"
-    serviceHistory.XMD := "Mở 1 chiều do đã xác minh được địa chỉ thuê bao"
-    serviceHistory.128K := "Đổi sim qua sim dung lượng 128K"
-    serviceHistory.CA64 := "Đổi sim qua sim dung lượng 64K"
-    serviceHistory.DSMP := "Đổi sim miễn phí"
-    serviceHistory.CCQ := "Thuê bao được đấu mới do CCQ và chủ cũ đã thanh toán hết cước / Chặn 2 chiều do chuyển chủ quyền / Cắt hủy/ cắt hẳn MobiGold để chuyển chủ quyền và chủ cũ đã thanh toán hết cước"
-    serviceHistory.CQC := "Thuê bao được đấu mới do chuyển chủ quyền và KH mới đồng ý thanh toán cước của chủ cũ"
-    serviceHistory.ANNI := "Chặn 1 chiều / 2 chiều do yêu cầu từ Bộ Công An"
-    serviceHistory.CA1 := "Chặn 2 chiều do mất máy / Chặn 1 chiều do mất máy"
-    serviceHistory.CA4 := "Chặn 2 chiều do mất sim / Chặn 1 chiều do mất sim"
-    serviceHistory.DEBT := "Chặn 1 chiều / Chặn 2 chiều do nợ cước"
-    serviceHistory.KHD := "Chặn 1 chiều do không dùng/Chặn 2 chiều do KH yêu cầu tạm khóa"
-    serviceHistory.KHDC := "Chặn 1 chiều / Chặn 2 chiều do địa chỉ không có thực, giả mạo hồ sơ"
-    serviceHistory.KNAI := "Chặn 1 / 2 chiều do khách hàng khiếu nại"
-    serviceHistory.KVMS := "Tạm khóa 2 chiều - VMS"
-    serviceHistory.KXD := "Chặn 1 / 2 chiều do không xác minh được thông tin thuê bao"
-    serviceHistory.QROI := "Chặn 1 / 2 chiều do thuê bao quấy rối"
-    serviceHistory.THLY := "Chặn 2 chiều do khách hàng yêu cầu thanh lý hợp đồng"
-    serviceHistory.XMB := "Chặn 1 / 2 chiều do khách hàng cung cấp sai địa chỉ"
-    serviceHistory.BADO := "Chặn 1 chiều do TB sử dụng vượt quá mức cước ứng trước, báo đỏ"
-    serviceHistory.HSO := "Chặn 1 chiều do không có hồ sơ"
-    serviceHistory.OTH := "Chặn 1 chiều do các lý do khác"
-    serviceHistory.CSKS := "Chặn 1 chiều do nghi ngờ sim kích hoạt sẵn"
-    serviceHistory.3FON := "Mobi365 chuyển sang MobiGold: không còn tiền"
-    serviceHistory.CA05 := "Cắt hủy/ cắt hẳn MobiGold trong vòng 5 ngày tính từ ngày hòa mạng (đã bỏ nghiệp vụ này)"
-    serviceHistory.CA2 := "Cắt hủy/ cắt hẳn MobiGold do sóng yếu"
-    serviceHistory.CA3 := "Cắt hủy/ cắt hẳn MobiGold do KH hủy số không sử dụng; Cắt hủy/ cắt hẳn trả trước do KH hủy số không sử dụng"
-    serviceHistory.CCNV := "Cắt hủy/ cắt hẳn MobiGold để chuyển sang thuê bao nghiệp vụ"
-    serviceHistory.CCVU := "Cắt hủy/ cắt hẳn MobiGold để chuyển sang thuê bao công vụ"
-    serviceHistory.CMCV := "Chuyển máy công vụ"
-    serviceHistory.CNV := "Cắt hủy/ cắt hẳn MobiGold nghiệp vụ"
-    serviceHistory.CTHU := "Cắt hủy/ cắt hẳn MobiGold thuộc sim thử"
-    serviceHistory.DEAC := "Chặn 2 chiều do hết hạn nghe / Thuê bao trả trước bị cắt hủy/ delete do bị khóa 2 chiều quá hạn (hiện nay là 31 ngày)"
-    serviceHistory.DPFC := "Cắt hủy/ cắt hẳn MobiGold để chuyển sang Fast Connect trả trước"
-    serviceHistory.FONS := "Cắt hủy/ cắt hẳn MobiGold vì KH chuyển sang SFONE"
-    serviceHistory.FONV := "Cắt hủy/ cắt hẳn MobiGold vì KH chuyển sang Viettel"
-    serviceHistory.GOZO := "Cắt hủy/ cắt hẳn MobiGold để chuyển sang MobiZone"
-    serviceHistory.HOSO := "Cắt hủy/ cắt hẳn MobiGold do không có hồ sơ"
-    serviceHistory.KKH := "MobiGold chuyển sang MobiCard, không kích hoạt"
-    serviceHistory.M365 := "Mobi365 chuyển sang MobiGold"
-    serviceHistory.MEZ := "Cắt hủy/ cắt hẳn MobiGold để chuyển sang MobiEZ"
-    serviceHistory.MF4U := "Cắt hủy/ cắt hẳn MobiGold để chuyển sang Mobi4U"
-    serviceHistory.MFQT := "Cắt hủy/ cắt hẳn MobiGold để chuyển sang Q-Teen"
-    serviceHistory.MFSV := "Cắt hủy/ cắt hẳn MobiGold để chuyển sang Q-Student"
-    serviceHistory.MGM3 := "Cắt hủy/ cắt hẳn MobiGold để chuyển sang Mobi365"
-    serviceHistory.MGMQ := "Cắt hủy/ cắt hẳn MobiGold để chuyển sang MobiQ"
-    serviceHistory.MOBI := "Cắt hủy/ cắt hẳn MobiGold để chuyển sang MobiCard"
-    serviceHistory.NO2T := "Cắt hủy/ cắt hẳn MobiGold do nợ cước quá"
-    serviceHistory.QFKK := "Cắt MobiQ để chuyển sang MobiGold"
-    serviceHistory.SAIS := "Cắt hủy/ cắt hẳn MobiGold do CH/ ĐLC đấu nối số sai qui định"
-    serviceHistory.TK6T := "Cắt hủy/ cắt hẳn MobiGold do thuê bao khóa 2 chiều quá 6 tháng (hiện nay là quá 31 ngày)"
-    serviceHistory.VINA := "Cắt hủy/ cắt hẳn MobiGold vì KH chuyển sang ViNaPhone"
-    serviceHistory.DNTD := "Đấu số trả trước mới (số mới - đấu nối tự động)"
-    serviceHistory.DNFC := "Đấu số MobiCard mới (do chuyển từ MobiGold sang)"
-    serviceHistory.DNGQ := "Đấu số MobiQ mới (do chuyển từ MobiGold sang)"
-    serviceHistory.GLZO := "MobiGold qua MobiZone"
-    serviceHistory.FQTE := "Chuyển MobiGold sang Q_TEEN"
-    serviceHistory.DNQT := "Chuyển MobiGold sang Mobi Qteen"
-    serviceHistory.DNG3 := "Chuyển MobiGold sang Mobi365"
-    serviceHistory.DNFU := "Chuyển MobiGold sang Mobi4U"
-    serviceHistory.DNFSV := "Chuyển MobiGold sang MobiQ_SV"
-    serviceHistory.DN2S := "Đấu nối Sim 2 số"
-    serviceHistory.DNGD := "Đấu nối hay khôi phục theo giấy duyệt"
-    serviceHistory.DOIS := "Đối soát"
-    serviceHistory.HUY := "Đấu F1 sửa sai TDN"
-    serviceHistory.KP := "Khôi phục số đã hủy"
-    serviceHistory.VMS := "Đấu mới"
-    serviceHistory.STH := "Sim Thu TT"
-    serviceHistory.DNST := "Đấu nối sim thử"
-    serviceHistory.DBO := "Thay đổi giữa các hình thức trả trước (do KH tự chuyển - bấm Note để xem chi tiết)"
-    serviceHistory.QSV := "Chuyển từ trả trước khác sang Q-SV"
-    serviceHistory.QTE := "Chuyển từ trả trước khác sang Q-Teen"
-    serviceHistory.INAC := "Chặn 1 chiều do hết hạn sử dụng (Mobi4U là do hết tiền)"
-    serviceHistory.ACTI := "Mở 2 chiều do nạp tiền / Kích hoạt số trả trước mới"
-    serviceHistory.RES := "Chặn 1 chiều do hết tiền (nhưng còn ngày sử dụng)"
-    serviceHistory.CA7 := "Hủy sim 2 số, thanh lý 1 số"
-    serviceHistory.CKCVB := "Chặn không chính chủ vùng biên, DTV xác minh ghi nhận code 19.19. Không xác minh được thì mời đến CHC"
-    serviceHistory.SVBG := "Spamcall-SVBG: ĐTV mời KH ra cửa hàng xác thực thông tin và làm cam kết để mở lại"
-
+    ; Read data from JSON file
+    data := LoadMobifoneData()
+    serviceHistory := data.Get("serviceHistory")
     serviceKey := GetSelectedText()
-    MsgBox loopkup(serviceHistory, serviceKey)
+
+    ; Create GUI with modern style
+    titleGUI := "Service History"
+    MyGui := Gui("+AlwaysOnTop -Caption", titleGUI)
+    MyGui.BackColor := "FFFFFF" ; White background
+
+    ; Title section
+    MyGui.SetFont("s14 bold", fontGUI)
+    MyGui.Add("Text", "x20 y20 w300 Center", "LỊCH SỬ DỊCH VỤ")
+
+    ; Add separator line
+    MyGui.Add("Text", "x20 y50 w300 c808080", "────────────────────────────────────────")
+
+    ; Service code section
+    MyGui.SetFont("s10 bold", fontGUI)
+    MyGui.Add("Text", "x20 y80", "MÃ DỊCH VỤ:")
+    MyGui.Add("Text", "x120 y80 c007AFF", serviceKey) ; Apple blue
+
+    ; History section
+    MyGui.SetFont("s10 bold", fontGUI)
+    MyGui.Add("Text", "x20 y70", " ")
+    if serviceHistory.Has(serviceKey) {
+        MyGui.SetFont("s10", fontGUI)
+        history := serviceHistory.Get(serviceKey)
+        MyGui.Add("Text", "x20 y120 w300", history)
+        height := 200
+    } else {
+        MyGui.SetFont("s10", fontGUI)
+        MyGui.Add("Text", "x20 y120 w300 cFF3B30", "Không tìm thấy mã này") ; Apple red
+        height := 180
+    }
+
+    ; Add close button
+    closeBtn := MyGui.Add("Text", "x315 y5 w20 h20 Center", "×")
+    closeBtn.SetFont("s14")
+    closeBtn.OnEvent("Click", (*) => MyGui.Destroy())
+
+    ; Add window drag ability
+    OnMessage(0x201, GuiDrag)
+    GuiDrag(wParam, lParam, msg, hwnd) {
+        static init := 0
+        if (init = 0) {
+            OnMessage(0x202, GuiDrag)
+            init := 1
+        }
+        if (wParam = 1) {
+            PostMessage(0xA1, 2)
+        }
+    }
+
+    MyGui.OnEvent("Escape", (*) => MyGui.Destroy())
+    MyGui.Show("w340 h" height)
+
+    ; Auto-close after 5 seconds
+    SetTimer () => MyGui.Destroy(), -5000
 }
 
 ;* Chuyen doi giay sang gio, phut
