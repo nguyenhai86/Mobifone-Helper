@@ -547,7 +547,7 @@ ShowLoanInfoByCodeOrCompletionCode(loanCodes, inputValue) {
 
     ; Search by completion code
     for code, info in loanCodes {
-        if (info.Get("Mã hoàn ứng") = inputValue)
+        if (info.Get("Mã hoàn ứng") = inputValue || code = inputValue)
             return FormatLoanInfo(code, info)
     }
     return Map("error", "Không tìm thấy thông tin cho: " inputValue)
