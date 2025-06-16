@@ -1,23 +1,34 @@
 ﻿#requires AutoHotkey v2.0
 #SingleInstance force
 
-fontGUI := "Segoe UI"
 ; ------------------------
-; json
+; Global variables
 ; ------------------------
+global filePATH := "mobifone_data.json"
+global loanCodes := {}
+global eligibleCVTN := []
+global flexibleRenewalFee := {}
+global serviceHistory := {}
+global fontGUI := "Segoe UI"
+
 #Include jsongo.ahk
-LoadMobifoneData() {
+InitializeData() {
+    data := 0
+    fileContent := ""
     try {
-        fileContent := FileRead("mobifone_data.json", "UTF-8")
+        fileContent := FileRead(filePATH, "UTF-8")
         data := jsongo.Parse(fileContent)
-        return data
     } catch Error as e {
         MsgBox "Error loading mobifone_data.json: " e.Message
-        return Map()
     }
+    fileContent := "" ; Clear fileContent to free memory
+
+    global loanCodes := data.Get("loanCodes")
+    global eligibleCVTN := data.Get("eligibleCVTN")
+    global flexibleRenewalFee := data.Get("flexibleRenewalFee")
+    global serviceHistory := data.Get("serviceHistory")
 }
-
-
+InitializeData()
 ;-------------------------
 ; Helpers functions
 ;-------------------------
@@ -38,6 +49,7 @@ FormatDate(date) {
 DateDiff__Custom(date) {
     return DateDiff(A_Now, date, "days")
 }
+
 DateParse(str, americanOrder := 0) {
     ; Definition of several RegExes
     static monthNames := "(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-zA-Z]*"
@@ -532,8 +544,6 @@ FormatLoanInfo(code, info) {
 }
 
 ^+u:: {
-    data := LoadMobifoneData()
-    loanCodes := data.Get("loanCodes")
     inputValue := GetSelectedText()
     result := ShowLoanInfoByCodeOrCompletionCode(loanCodes, inputValue)
 
@@ -612,10 +622,6 @@ FormatLoanInfo(code, info) {
 
 ;* Tra cứu gói được CVTN (Chuyển vùng trong nước) và GHLH (Gia hạn linh hoạt)
 ^+g:: {
-    data := LoadMobifoneData()
-    eligibleCVTN := data.Get("eligibleCVTN")
-    flexibleRenewalFee := data.Get("flexibleRenewalFee")
-
     packageName := GetSelectedText()
     if !RegExMatch(packageName, "^[a-zA-Z0-9]+$") {
         MsgBox Format("Gói cước '{1}' không hợp lệ", packageName)
@@ -672,9 +678,6 @@ FormatLoanInfo(code, info) {
 
 ;* Tra cứu lịch sử dịch vụ
 ^+l:: {
-    ; Read data from JSON file
-    data := LoadMobifoneData()
-    serviceHistory := data.Get("serviceHistory")
     serviceKey := GetSelectedText()
 
     ; Create GUI with modern style
