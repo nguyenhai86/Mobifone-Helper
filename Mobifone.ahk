@@ -416,7 +416,6 @@ loopkup(value, key) {
         }
     }
 
-    ; Show GUI
     MyGui.OnEvent("Escape", (*) => MyGui.Destroy())
     MyGui.Show("w340 " (canRegister ? "h160" : "h200"))
 
@@ -457,6 +456,13 @@ loopkup(value, key) {
         }
     }
 
+    ; Check blacklist status
+    isBlacklisted := blacklist.has(phone)
+    blacklistInfo := ""
+    if (isBlacklisted) {
+        blacklistInfo := blacklist.Get(phone)
+    }
+
     ; Create minimal GUI
     titleGUI := "Carrier Info"
     MyGui := Gui("+AlwaysOnTop -Caption", titleGUI)
@@ -464,7 +470,7 @@ loopkup(value, key) {
 
     ; Title section
     MyGui.SetFont("s14 bold", fontGUI)
-    MyGui.Add("Text", "x20 y20 w340 Center", "THÔNG TIN NHÀ MẠNG")
+    MyGui.Add("Text", "x20 y20 w340 Center", "THÔNG TIN THUÊ BAO")
 
     ; Add separator line
     MyGui.Add("Text", "x20 y50 w340 c808080", "────────────────────────────────────────")
@@ -486,6 +492,16 @@ loopkup(value, key) {
         MyGui.Add("Text", "x140 y120 cFF3B30", "Không tìm thấy") ; Apple red
     }
 
+    ; Blacklist section
+    MyGui.Add("Text", "x20 y200", "BLACKLIST:")
+    if (isBlacklisted) {
+        MyGui.Add("Text", "x140 y200 cFF3B30", "✗ Có") ; Red
+        ; Show blacklist info
+        MyGui.Add("Text", "x20 y230 w320 cFF3B30", blacklistInfo)
+    } else {
+        MyGui.Add("Text", "x140 y200 c34C759", "✓ Không") ; Green
+    }
+
     ; Add close button
     closeBtn := MyGui.Add("Text", "x355 y5 w20 h20 Center", "×")
     closeBtn.SetFont("s14")
@@ -505,10 +521,11 @@ loopkup(value, key) {
     }
 
     MyGui.OnEvent("Escape", (*) => MyGui.Destroy())
-    MyGui.Show("w380 " (carrier ? "h200" : "h160"))
+    finalHeight := isBlacklisted ? "h350" : "h270"
+    MyGui.Show(Format("w340 {1}", finalHeight))
 
-    ; Auto-close after 3 seconds
-    SetTimer () => MyGui.Destroy(), -3000
+    ; Auto-close after 5 seconds
+    SetTimer () => MyGui.Destroy(), -5000
 }
 ;* Tra cuu hoa hong dai ly va thuc nhan
 ^+d:: {
@@ -675,67 +692,6 @@ FormatLoanInfo(code, info) {
         WinClose guiTitle
     }
     MyGui.Show("")
-}
-
-; * Tra cứu blacklist
-^+b:: {
-    numberPhone := GetSelectedText()
-    ;check if the number is valid
-    if !RegExMatch(numberPhone, "^\d{9,12}$") {
-        MsgBox "Vui lòng chọn một số điện thoại hợp lệ (9 hoặc 12 chữ số)."
-        return
-    }
-    numberPhone := RegExReplace(numberPhone, "^0")
-
-    result := blacklist.Has(numberPhone) ? blacklist.Get(numberPhone) : "Số điện thoại không thuộc blacklist"
-
-    ; Create GUI with modern style
-    titleGUI := "Blacklist Info"
-    MyGui := Gui("+AlwaysOnTop -Caption", titleGUI)
-    MyGui.BackColor := "FFFFFF" ; White background
-
-    ; Title section
-    MyGui.SetFont("s14 bold", fontGUI)
-    MyGui.Add("Text", "x20 y20 w300 Center", "KIỂM TRA BLACKLIST")
-
-    ; Add separator line
-    MyGui.Add("Text", "x20 y50 w300 c808080", "────────────────────────────────────────")
-
-    ; Phone number section
-    MyGui.SetFont("s10 bold", fontGUI)
-    MyGui.Add("Text", "x20 y80", "SỐ ĐIỆN THOẠI:")
-    MyGui.Add("Text", "x140 y80 c007AFF", numberPhone) ; Apple blue
-
-    ; Warning content
-    MyGui.SetFont("s10 bold", fontGUI)
-    MyGui.Add("Text", "x20 y120", "CẢNH BÁO:")
-    MyGui.SetFont("s10", fontGUI)
-    color := blacklist.Has(numberPhone) ? "cFF3B30" : "c34C759" ; Red if blacklisted, green if not
-    MyGui.Add("Text", "x140 y120 w200 " color, result)
-
-    ; Add close button
-    closeBtn := MyGui.Add("Text", "x315 y5 w20 h20 Center", "×")
-    closeBtn.SetFont("s14")
-    closeBtn.OnEvent("Click", (*) => MyGui.Destroy())
-
-    ; Add window drag ability
-    OnMessage(0x201, GuiDrag)
-    GuiDrag(wParam, lParam, msg, hwnd) {
-        static init := 0
-        if (init = 0) {
-            OnMessage(0x202, GuiDrag)
-            init := 1
-        }
-        if (wParam = 1) {
-            PostMessage(0xA1, 2)
-        }
-    }
-
-    MyGui.OnEvent("Escape", (*) => MyGui.Destroy())
-    MyGui.Show("w340 h200")
-
-    ; Auto-close after 3 seconds
-    SetTimer () => MyGui.Destroy(), -3000
 }
 
 ;* Tra cứu lịch sử dịch vụ
