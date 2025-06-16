@@ -10,6 +10,8 @@ global eligibleCVTN := []
 global flexibleRenewalFee := {}
 global serviceHistory := {}
 global blacklist := {}
+global AGENCY_COMMISSION_RATE := 0.159
+global ACTUAL_COMMISSION_RATE := 0.127
 global fontGUI := "Segoe UI"
 
 #Include jsongo.ahk
@@ -29,6 +31,8 @@ InitializeData() {
     global flexibleRenewalFee := data.Get("flexibleRenewalFee")
     global serviceHistory := data.Get("serviceHistory")
     global blacklist := data.Get("blacklist")
+    global AGENCY_COMMISSION_RATE := data.Get("AGENCY_COMMISSION_RATE")
+    global ACTUAL_COMMISSION_RATE := data.Get("ACTUAL_COMMISSION_RATE")
 }
 InitializeData()
 ;-------------------------
@@ -529,15 +533,25 @@ loopkup(value, key) {
 }
 ;* Tra cuu hoa hong dai ly va thuc nhan
 ^+d:: {
-    commissionRateAgent := 0.159
-    commissionRateNet := 0.127
-    inputBox := InputBox("Nhập giá gói cước", "Tính hoa hồng", "w150 h100")
-    packagePrice := Trim(inputBox.Value)
 
+    ; Get package price from user
+    packagePriceInput := InputBox("Nhập giá gói cước", "Tính hoa hồng", "w150 h100")
+    packagePrice := Trim(packagePriceInput.Value)*1000
+
+    ; Calculate and format commissions if input is valid
     if packagePrice {
-        agentCommission := Round(packagePrice * commissionRateAgent)
-        netCommission := Round(packagePrice * commissionRateNet)
-        MsgBox Format("Hoa hồng đại lý: {1}`n`nHoa hồng thực nhận: {2}", agentCommission, netCommission)
+        ; Calculate commissions
+        agencyCommission := Round(packagePrice * AGENCY_COMMISSION_RATE)
+        actualCommission := Round(packagePrice * ACTUAL_COMMISSION_RATE)
+
+        ; Format currency with thousands separator (.)
+        formattedAgencyCommission := RegExReplace(agencyCommission, "(\d)(?=(\d{3})+$)", "$1.")
+        formattedActualCommission := RegExReplace(actualCommission, "(\d)(?=(\d{3})+$)", "$1.")
+
+        ; Display results
+        MsgBox Format("Hoa hồng đại lý: {1} VNĐ`n`nHoa hồng thực nhận: {2} VNĐ", 
+                     formattedAgencyCommission, 
+                     formattedActualCommission)
     }
 }
 ;* Tổng đài ứng tiền
