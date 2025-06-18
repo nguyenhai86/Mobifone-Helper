@@ -10,6 +10,7 @@ global eligibleCVTN := []
 global flexibleRenewalFee := {}
 global serviceHistory := {}
 global blacklist := {}
+global macros := {}
 global AGENCY_COMMISSION_RATE := 0.159
 global ACTUAL_COMMISSION_RATE := 0.127
 global fontGUI := "Segoe UI"
@@ -31,6 +32,7 @@ InitializeData() {
     global flexibleRenewalFee := data.Get("flexibleRenewalFee")
     global serviceHistory := data.Get("serviceHistory")
     global blacklist := data.Get("blacklist")
+    global macros := data.Get("macros")
     global AGENCY_COMMISSION_RATE := data.Get("AGENCY_COMMISSION_RATE")
     global ACTUAL_COMMISSION_RATE := data.Get("ACTUAL_COMMISSION_RATE")
 }
@@ -45,6 +47,9 @@ GetSelectedText() {
     selectedText := Trim(A_Clipboard)
     A_Clipboard := oldClipboard
     return selectedText
+}
+makeHandler(text) {
+    return (*) => SendText(text)
 }
 DateAdd_Custom(date, days) {
     return DateAdd(date, days, "days")
@@ -536,7 +541,7 @@ loopkup(value, key) {
 
     ; Get package price from user
     packagePriceInput := InputBox("Nhập giá gói cước", "Tính hoa hồng", "w150 h100")
-    packagePrice := Trim(packagePriceInput.Value)*1000
+    packagePrice := Trim(packagePriceInput.Value) * 1000
 
     ; Calculate and format commissions if input is valid
     if packagePrice {
@@ -549,9 +554,9 @@ loopkup(value, key) {
         formattedActualCommission := RegExReplace(actualCommission, "(\d)(?=(\d{3})+$)", "$1.")
 
         ; Display results
-        MsgBox Format("Hoa hồng đại lý: {1} VNĐ`n`nHoa hồng thực nhận: {2} VNĐ", 
-                     formattedAgencyCommission, 
-                     formattedActualCommission)
+        MsgBox Format("Hoa hồng đại lý: {1} VNĐ`n`nHoa hồng thực nhận: {2} VNĐ",
+            formattedAgencyCommission,
+            formattedActualCommission)
     }
 }
 ;* Tổng đài ứng tiền
@@ -826,7 +831,7 @@ FormatLoanInfo(code, info) {
     SetTimer () => MyGui.Destroy(), -3000
 }
 
-;* Chuyen doi KB sang MB, GB
+;*  Chuyen doi KB sang MB, GB
 ^+k:: {
     kb := GetSelectedText()
     if !IsInteger(kb) {
@@ -870,6 +875,17 @@ FormatLoanInfo(code, info) {
     ; Auto-close after 3 seconds
     SetTimer () => MyGui.Destroy(), -3000
 }
+;* Load macros from JSON file and create hotstrings
+hotsting() {
+    try {
+        for shortcut, textValue in macros {
+            hotstring("::" shortcut, MakeHandler(textValue))
+        }
+    } catch Error as err {
+        MsgBox "Error loading templates: " err.Message
+    }
+}
+hotsting()
 
 ; * Send key F1, F2, F3, F4 to the active window
 F1:: Send "^1"
