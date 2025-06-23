@@ -33,7 +33,7 @@ Add commentMore actions
 
 ## 🚀 Cài đặt
 
-1. Tải xuống file `Mobifone.exe` hoặc `Mobifone.ahk`
+1. Tải xuống file `Mobifone.exe` hoặc `Mobifone.ahk` và mobifone_data.json
 2. Chạy file để bắt đầu sử dụng
 
 ## 📖 Hướng dẫn sử dụng
@@ -58,7 +58,7 @@ Add commentMore actions
 | Phím tắt                                          | Chức năng                                                    |
 | ------------------------------------------------- | ------------------------------------------------------------ |
 | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Y</kbd> | Tra cứu profile đăng ký được DT20                            |
-| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd> | Tra cứu nhà mạng                                             |
+| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>S</kbd> | Tra cứu nhà mạng, blacklist                                  |
 | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>G</kbd> | Tra cứu gói được gia hạn linh hoạt (đơn kỳ và dài kỳ) / CVTN |
 | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>L</kbd> | Tra cứu mã lịch sử dịch vụ                                   |
 | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>U</kbd> | Tra cứu tổng đài ứng tiền (mã hoàn ứng, mã ứng, số tổng đài) |
