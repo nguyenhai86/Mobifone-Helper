@@ -10,18 +10,17 @@ Add commentMore actions
 
 ## 📑 Mục lục
 
-- [📱 Công Cụ Hỗ Trợ Mobifone](#-công-cụ-hỗ-trợ-mobifone)
-  - [📑 Mục lục](#-mục-lục)
-  - [⚠️ TUYÊN BỐ TỪ CHỐI TRÁCH NHIỆM](#️-tuyên-bố-từ-chối-trách-nhiệm)
-  - [💻 Yêu cầu hệ thống](#-yêu-cầu-hệ-thống)
-  - [🚀 Cài đặt](#-cài-đặt)
-  - [📖 Hướng dẫn sử dụng](#-hướng-dẫn-sử-dụng)
-    - [⭐ Tính năng chung](#-tính-năng-chung)
-  - [📅 Cộng ngày](#-cộng-ngày)
-  - [🔍 Tra cứu mã / gói](#-tra-cứu-mã--gói)
-  - [🔄 Công cụ chuyển đổi đơn vị](#-công-cụ-chuyển-đổi-đơn-vị)
-  - [🙏 Credits](#-credits)
-  - [📞 Liên hệ \& Báo lỗi](#-liên-hệ--báo-lỗi)
+- [📑 Mục lục](#-mục-lục)
+- [⚠️ TUYÊN BỐ TỪ CHỐI TRÁCH NHIỆM](#️-tuyên-bố-từ-chối-trách-nhiệm)
+- [💻 Yêu cầu hệ thống](#-yêu-cầu-hệ-thống)
+- [🚀 Cài đặt](#-cài-đặt)
+- [📖 Hướng dẫn sử dụng](#-hướng-dẫn-sử-dụng)
+  - [⭐ Tính năng chung](#-tính-năng-chung)
+- [📅 Cộng ngày](#-cộng-ngày)
+- [🔍 Tra cứu mã / gói](#-tra-cứu-mã--gói)
+- [🔄 Công cụ chuyển đổi đơn vị](#-công-cụ-chuyển-đổi-đơn-vị)
+- [🙏 Credits](#-credits)
+- [📞 Liên hệ \& Báo lỗi](#-liên-hệ--báo-lỗi)
 
 ## ⚠️ TUYÊN BỐ TỪ CHỐI TRÁCH NHIỆM
 
@@ -69,21 +68,12 @@ Add commentMore actions
 | ------------------------------------------------- | ------------------------------------------------ |
 | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>J</kbd> | Chuyển từ giây sang dạng "Giờ phút giây"         |
 | <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>K</kbd> | Chuyển từ KB sang dạng "MB và GB" (tự động copy) |
-
+| <kbd>Ctrl</kbd> + <kbd>Esc</kbd>                  | Đóng chrome.exe và inbit                         |
 
 ## 🙏 Credits
 
 - 🎨 Icon được cung cấp bởi [Icons8](https://icons8.com)
 - ⚡ Phát triển bằng [AutoHotkey v2.0](https://www.autohotkey.com)
-
-
-
-
-
-
-
-
-
 
 ## 📞 Liên hệ & Báo lỗi
 
