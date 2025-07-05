@@ -446,7 +446,7 @@ loopkup(value, key) {
         "Viettel", "18008098 - Cuộc gọi miễn phí",
         "Mobifone", "18001090 - Cuộc gọi miễn phí",
         "Vinaphone", "18001091 - Cuộc gọi miễn phí",
-        "GtelMobile", "0993 196 196 - Cuộc gọi thông thường",
+        "GtelMobile", "19000292 - 1000đ / Phút, 24/7",
         "Vietnamobile", "789 - Miễn phí / 0922789789 - Cuộc gọi thông thường",
         "Itelecom", "0877 087 087 - Cuộc gọi thông thường"
     )
@@ -875,6 +875,13 @@ FormatLoanInfo(code, info) {
     ; Auto-close after 3 seconds
     SetTimer () => MyGui.Destroy(), -3000
 }
+
+^Escape:: {
+    ProcessClose("chrome.exe")
+    ProcessClose("IMC.EXE")
+    DllCall("user32.dll\LockWorkStation")
+}
+
 ;* Load macros from JSON file and create hotstrings
 hotsting() {
     try {
