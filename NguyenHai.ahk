@@ -96,6 +96,61 @@ Open() {
 
     Run "C:\Program Files\Inbit\Inbit Messenger\IMC.exe"
 }
+
+global ShortSleep := 600
+global LongSleep := 500
+
+::66:: {
+    SendText "HỦY"
+    Sleep ShortSleep
+    Send "{Down}"
+    Sleep ShortSleep
+    Send "{Down}"
+    Sleep ShortSleep
+    Send "{Enter}"
+    Sleep LongSleep
+    Send "{Tab}{Tab}"
+
+    SendText "."
+    Send "{Tab}"
+
+    SendText "."
+    Send "{Tab}{Tab}{Tab}"
+
+    Send "t"
+    Sleep ShortSleep
+    Send "{Enter}"
+    Sleep ShortSleep
+    Send "{Tab}"
+
+    SendText '.'
+}
+::77:: {
+    SendText "Mong"
+    Sleep ShortSleep
+    Send "{Down}"
+    Sleep ShortSleep
+    Send "{Down}"
+    Sleep ShortSleep
+    Send "{Enter}"
+    Sleep LongSleep
+    Send "{Tab}{Tab}"
+
+    SendText "."
+    Send "{Tab}"
+
+    SendText "."
+    Send "{Tab}{Tab}{Tab}"
+
+    Send "t"
+    Sleep ShortSleep
+    Send "{Enter}"
+    Sleep ShortSleep
+    Send "{Tab}"
+
+    SendText '.'
+}
+
 ^Escape:: {
     if ProcessExist("chrome.exe") {
         ProcessClose("chrome.exe")

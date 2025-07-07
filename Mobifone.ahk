@@ -889,11 +889,6 @@ hotsting() {
 }
 hotsting()
 
-; * Send key F1, F2, F3, F4 to the active window
-F1:: Send "^1"
-F2:: Send "^2"
-F3:: Send "^3"
-F4:: Send "^4"
 
 ; * Send key F5 to refresh the active window
 F5:: {
