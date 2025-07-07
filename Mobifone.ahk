@@ -876,11 +876,6 @@ FormatLoanInfo(code, info) {
     SetTimer () => MyGui.Destroy(), -3000
 }
 
-^Escape:: {
-    ProcessClose("chrome.exe")
-    ProcessClose("IMC.EXE")
-    DllCall("user32.dll\LockWorkStation")
-}
 
 ;* Load macros from JSON file and create hotstrings
 hotsting() {
