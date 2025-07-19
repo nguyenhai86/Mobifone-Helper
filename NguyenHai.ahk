@@ -7,13 +7,17 @@ Open() {
     SleepShortTime := 500
     ; Windows THÔNG TIN
     Run CentPath
-    Sleep 5000
+    WinWait "Browser Lock"
+    WinActivate
+    Sleep SleepShortTime
+
     SendText "Linh210399"
     Send "{Enter}"
     Sleep SleepLongTime
 
     WinWait "New Tab - Cent Browser"
     WinMaximize
+    Sleep SleepLongTime
 
     Run "http://10.39.220.163:8030/wallBoard-realTime"
     Sleep SleepShortTime
@@ -91,7 +95,7 @@ Open() {
 
     Sleep SleepLongTime
 
-    Run "C:\Users\Administrator\AppData\Local\CentBrowser\Application\chrome_proxy.exe  --profile-directory=`"Profile 1`" --app-id=fhihpiojkbmbpdjeoajapmgkhlnakfjf"
+    Run "C:\Users\Administrator\AppData\Local\CentBrowser\Application\chrome_proxy.exe  --profile-directory=`"Profile 1`" --app=https://docs.google.com/spreadsheets/d/1T64xPKbrgkiuJQNPovlAOx5hbDKtpu5Px6RQK7tzrE0"
     Sleep SleepShortTime
 
     Run "C:\Program Files\Inbit\Inbit Messenger\IMC.exe"

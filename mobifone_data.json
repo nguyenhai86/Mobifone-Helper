@@ -118,14 +118,6 @@
     "3E300",
     "6E300",
     "12E300",
-    "E500",
-    "3E500",
-    "6E500",
-    "12E500",
-    "E1000",
-    "3E1000",
-    "6E1000",
-    "12E1000",
     "GX139",
     "3GX139",
     "6GX139",
@@ -445,6 +437,26 @@
       "Từ chối": "TC",
       "Chủ động HT": "HT",
       "Mã hoàn ứng": "SPHU"
+    },
+    "9466": {
+      "Thời gian": "7 ngày",
+      "Tài khoản": "Gói cước",
+      "Kiểm tra nợ": "KT",
+      "ĐK ứng tự động": "",
+      "Hủy ứng tự động": "",
+      "Từ chối": "TC",
+      "Chủ động HT": "TT",
+      "Mã hoàn ứng": ""
+    },
+    "9623": {
+      "Thời gian": "7 ngày",
+      "Tài khoản": "Gói cước",
+      "Kiểm tra nợ": "KT",
+      "ĐK ứng tự động": "",
+      "Hủy ứng tự động": "",
+      "Từ chối": "TC",
+      "Chủ động HT": "TT",
+      "Mã hoàn ứng": ""
     }
   },
   "blacklist": {
