@@ -91,7 +91,7 @@ Open() {
     Run "https://10.3.17.147:9009/layout"
     Sleep SleepShortTime
 
-    Run "http://10.50.9.105:8888/VASP/faces/vas/report/ultSearchObject.xhtml"
+    Run "http://10.2.9.94:6060/SELFCARE/"
 
     Sleep SleepLongTime
 
