@@ -896,3 +896,9 @@ F5:: {
     Sleep 150
     Send "{Enter}"
 }
+
+F1:: {
+    Send "!d"
+    SendText "https://tracuu.mobifone.vn/1090/main.jsp"
+    Send "{Enter}"
+}

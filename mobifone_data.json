@@ -93,7 +93,8 @@
     "CA7": "Hủy sim 2 số, thanh lý 1 số",
     "CKCVB": "Chặn không chính chủ vùng biên, DTV xác minh ghi nhận code 19.19. Không xác minh được thì mời đến CHC",
     "SVBG": "Spamcall-SVBG: ĐTV mời KH ra cửa hàng xác thực thông tin và làm cam kết để mở lại",
-    "KMTD": "Chặn cắt do hết hạn sử dụng với thuê bao Saymee (70877)"
+    "KMTD": "Chặn cắt do hết hạn sử dụng với thuê bao Saymee (70877)",
+    "CNDB": "Thay đổi địa chỉ theo địa bàn hành chính cấp 2 TBTS"
   },
   "eligibleCVTN": [
     "NA70",
@@ -118,6 +119,14 @@
     "3E300",
     "6E300",
     "12E300",
+    "E500",
+    "3E500",
+    "6E500",
+    "12E500",
+    "E1000",
+    "3E1000",
+    "6E1000",
+    "12E1000",
     "GX139",
     "3GX139",
     "6GX139",
@@ -355,7 +364,12 @@
     "AG155": "35.000 đ",
     "FZT135": "5.000 đ",
     "GTP120": "5.000 đ",
-    "CGDG": "5.000 đ"
+    "CGDG": "5.000 đ",
+    "V90": "5.000 đ",
+    "V180": "7.500 đ",
+    "5GV": "100.000 đ",
+    "FM": "7.500 đ",
+    "E159": "10.000	đ"
   },
   "loanCodes": {
     "9015": {
@@ -440,23 +454,23 @@
     },
     "9466": {
       "Thời gian": "7 ngày",
-      "Tài khoản": "Gói cước",
+      "Tài khoản": "Ứng gói cước",
       "Kiểm tra nợ": "KT",
       "ĐK ứng tự động": "",
       "Hủy ứng tự động": "",
       "Từ chối": "TC",
       "Chủ động HT": "TT",
-      "Mã hoàn ứng": ""
+      "Mã hoàn ứng": "RUT_1520"
     },
     "9623": {
       "Thời gian": "7 ngày",
-      "Tài khoản": "Gói cước",
+      "Tài khoản": "Ứng gói cước",
       "Kiểm tra nợ": "KT",
       "ĐK ứng tự động": "",
       "Hủy ứng tự động": "",
       "Từ chối": "TC",
       "Chủ động HT": "TT",
-      "Mã hoàn ứng": ""
+      "Mã hoàn ứng": "Note thêm: Các thuê bao trả trước có số cuối SĐT là 0,2,4,6,8"
     }
   },
   "blacklist": {
@@ -598,7 +612,10 @@
     "903956121": "Việt - KHTX",
     "899669686": "KHTX, gọi KN liên quan cước nợ trước ( KH thiếu não nên giải thích KH không hiểu ), KN MNP, yêu cầu gặp luật sư của KH để làm việc",
     "706286666": "KH Điêu Khắc Hoàng, thường xuyên gọi tổng đài yêu cầu kiểm tra thẻ cào, mở refil. Không thích DTV hỏi mệnh giá thẻ cào, nghe kỹ Seri KH đọc",
-    "923147188": "KH Điêu Khắc Hoàng, thường xuyên gọi tổng đài yêu cầu kiểm tra thẻ cào, mở refil. Không thích DTV hỏi mệnh giá thẻ cào, nghe kỹ Seri KH đọc"
+    "923147188": "KH Điêu Khắc Hoàng, thường xuyên gọi tổng đài yêu cầu kiểm tra thẻ cào, mở refil. Không thích DTV hỏi mệnh giá thẻ cào, nghe kỹ Seri KH đọc",
+    "776675695": "KH hay gọi lên yêu cầu thêm số ... vào DS Call barring",
+    "702736859": "KH thường xuyên gọi lên tổng đài yêu cầu gặp DTV trước đó, cuộc gọi không có nội dung. KH xàm",
+    "932735991": "Anh Khá Bảnh đòi gặp ds, hay góp ý. KH xàm"
   },
   "macros": {
     "em2": "Dear Anh / Chị,\nNhờ Anh / Chị hỗ trợ phản hồi KH qua email. Em cảm ơn\nEmail: \n\n",
