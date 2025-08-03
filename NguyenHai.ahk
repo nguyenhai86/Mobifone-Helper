@@ -15,6 +15,23 @@ Open() {
     Send "{Enter}"
     Sleep SleepLongTime
 
+    if !WinWait("New Tab - Cent Browser", , 15) {
+        WinActivate("Browser Lock")
+        Sleep SleepShortTime
+        SendText "Linh210399"
+        Send "{Enter}"
+        Sleep SleepLongTime
+
+        if !WinWait("New Tab - Cent Browser", , 5) {
+            WinActivate("Browser Lock")
+            Send "{Tab}"
+            Sleep SleepShortTime
+            SendText "Linh210399"
+            Send "{Enter}"
+            Sleep SleepLongTime
+        }
+    }
+
     WinWait "New Tab - Cent Browser"
     WinMaximize
     Sleep SleepLongTime
