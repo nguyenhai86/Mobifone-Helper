@@ -902,3 +902,24 @@ F1:: {
     SendText "https://tracuu.mobifone.vn/1090/main.jsp"
     Send "{Enter}"
 }
+
+`:: {
+    static lastPress := 0
+    static pressCount := 0
+    now := A_TickCount
+
+    if (now - lastPress < 400) {
+        pressCount += 1
+    } else {
+        pressCount := 1
+    }
+    lastPress := now
+
+    if (pressCount = 1) {
+        Send "^c"
+    } else if (pressCount = 2) {
+        text := Trim(A_Clipboard)
+        SendInput(text)
+        pressCount := 0
+    }
+}
