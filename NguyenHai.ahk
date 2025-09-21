@@ -136,5 +136,8 @@ IsCentChromeRunning() {
         DllCall("user32.dll\LockWorkStation")
     }
     else
+    {
+        ProcessClose("chrome.exe")
         Open()
+    }
 }
