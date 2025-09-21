@@ -1,8 +1,7 @@
 #Requires AutoHotkey v2.0
 #SingleInstance force
-
+global CentPath := "C:\Users\Administrator\AppData\Local\CentBrowser\Application\chrome.exe"
 Open() {
-    CentPath := "C:\Users\Administrator\AppData\Local\CentBrowser\Application\chrome.exe"
     SleepLongTime := 2000
     SleepShortTime := 500
     ; Windows THÔNG TIN
@@ -121,59 +120,17 @@ Open() {
 global ShortSleep := 600
 global LongSleep := 500
 
-::66:: {
-    SendText "HỦY"
-    Sleep ShortSleep
-    Send "{Down}"
-    Sleep ShortSleep
-    Send "{Down}"
-    Sleep ShortSleep
-    Send "{Enter}"
-    Sleep LongSleep
-    Send "{Tab}{Tab}"
-
-    SendText "."
-    Send "{Tab}"
-
-    SendText "."
-    Send "{Tab}{Tab}{Tab}"
-
-    Send "t"
-    Sleep ShortSleep
-    Send "{Enter}"
-    Sleep ShortSleep
-    Send "{Tab}"
-
-    SendText '.'
+IsCentChromeRunning() {
+    query := "Select * from Win32_Process where Name='chrome.exe'"
+    for process in ComObjGet("winmgmts:").ExecQuery(query) {
+        if (StrLower(process.ExecutablePath) = StrLower(CentPath)) {
+            return true
+        }
+    }
+    return false
 }
-::77:: {
-    SendText "Mong"
-    Sleep ShortSleep
-    Send "{Down}"
-    Sleep ShortSleep
-    Send "{Down}"
-    Sleep ShortSleep
-    Send "{Enter}"
-    Sleep LongSleep
-    Send "{Tab}{Tab}"
-
-    SendText "."
-    Send "{Tab}"
-
-    SendText "."
-    Send "{Tab}{Tab}{Tab}"
-
-    Send "t"
-    Sleep ShortSleep
-    Send "{Enter}"
-    Sleep ShortSleep
-    Send "{Tab}"
-
-    SendText '.'
-}
-
 ^Escape:: {
-    if ProcessExist("chrome.exe") {
+    if IsCentChromeRunning() {
         ProcessClose("chrome.exe")
         ProcessClose("IMC.EXE")
         DllCall("user32.dll\LockWorkStation")
